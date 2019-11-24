@@ -1,0 +1,62 @@
+---
+title: "About this project"
+author:
+- name: Futu Chen
+description: |
+  This page holds my required answers for BST260 final project
+ 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+### Overview and Motivation:   
+The word “Masters swimmer” simply indicates swimmers who are 18 and older. They usually consist of competitive swimmers, triathletes and recreational swimmers. U.S. Masters Swimming (USMS) is a national nonprofit that provides membership benefits to nearly 65,000 Masters swimmers across the country. The emphasize of USMS is to provide a healthy exercise program for people age 18 to 99 at any swimming level. It has regional branches, such as New England Local Masters Swimming Committee (NE LMSC), and clubs/workout groups under each branch. This project will be focus on the NE LMSC.
+
+People who work out with one of the USMS clubs usually pay a membership fee (varying by clubs), in addition to a USMS yearly membership, and can practice as a group with coached workouts. Swimmers can choose to compete or simply swim for fitness.  Researches have shown the benefits of swimming in promoting optimal health. Additionally, swimming as a group with coached work out can help to reduce sports related injury and provide substantial social and emotional benefits to the swimmers. 
+
+Publications that analyzed master’s swimmers often just studied among elite swimmers (swimmers who meet the seed – required time – to compete in national or world championships). Those researches dropped “slow” swimmers who cannot meet the seed requirement but actually made up a large majority of the master’s swimmer population. 
+Regional championships, such as New England LMSC Short Course Yards Championship (NE LMSC SCY), does not require a base time and welcomes to anyone who has a membership with USMS. As mentioned above, swimmers can choose to participate in competitions (swim meets) or not. I am a long-term dedicated master’s swimmer who never professionally swam before. I noticed that people like me who do not have professional backgrounds are less likely to participant in the swim meets. Swim meet can be an incentive for effective training and a good opportunity to build social connections.
+
+I hope that through this explorative analysis, we can understand how swimmers at all levels participated in the race and how they are performed, with the hope to encourage more and more swimmers without a professional background to join the future meets. 
+
+
+### Related Work:   
+Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+
+### Initial Questions:   
+What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?  
+At the design stage of this project:  
++ Understand how individuals and clubs engaged in the NELMSC SCY Championship over the past 10 years
++ Understand how swimmers are doing over time, especially whether participation in the swim meets can improve swimmers’ performance for both “fast” and “slow” swimmers
+: how “slow” swimmers did and whether participating in the swim meet motivate their improvement in the swimming time. 
+
+
+### Data: 
+Race data are available online at: [NELMSC website](https://www.nelmsc.org/)
+The tricky part is that race outcomes are .cl2 files. .cl2 is a race management file format that exported from race recording software. They appear to be text files but are much harder to put into a readable, legal excel or csv file. That is also why I choose to analyze individual events only. Team events need extra cleaning on splits, times and stroke legs, which are hard to understand the .cl2 structure. 
+
+
+
+### Exploratory Analysis: 
+What visualizations did you use to look at your data in different ways? What are the different statistical methods you considered? Justify the decisions you made, and show any major changes to your ideas. How did you reach these conclusions?
+
+### Final Analysis:
+What did you learn about the data? How did you answer the questions? How can you justify your answers?
+
+
+
+&nbsp;
+<hr />
+<p style="text-align: center;">A work by Futu Chen</p>
+<p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Add font awesome icons -->
+<p style="text-align: center;">
+    <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a>
+    <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
+</p>

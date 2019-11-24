@@ -1,0 +1,46 @@
+---
+title: "A Case Study on New England LMSC Short Course Yards Championship: 2009-2019"
+description: |
+  BST260 Final project  
+  Author: Futu Chen
+site: distill::distill_website
+---
+### Welcome  
+
+Thoughout, I explored the individual event outcome from 2009 to 2019......
+  
+**For more information (specifically for TA...), please click "about"**
+
+Firstly, let's
+<iframe width="900" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~madaopt/3.embed"></iframe>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Learn more about creating websites with Distill at:
+# https://rstudio.github.io/distill/website.html
+
+```
+
+
+
+
+
+
+
+
+&nbsp;
+<hr />
+<p style="text-align: center;">A work by Futu Chen</p>
+<p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Add font awesome icons -->
+<p style="text-align: center;">
+    <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a>
+    <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
+</p>
+
+&nbsp;
+
