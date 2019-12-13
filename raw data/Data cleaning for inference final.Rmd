@@ -1,0 +1,196 @@
+---
+title: "Data cleaning for inference"
+author: "Futu Chen"
+date: "11/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This is a cleaned rmd file holds extra data wangling I performed - for inference
+
+**Please carefully read through the comments before hitting "kint". Make sure that you acknowledge that it costs time running them**  
+**I used the RDS I created from "Data cleaning final doc.rmd. Those datasets should be included in the repository**
+
+
+```{r}
+#packages and functions - can't stop, won't stop
+"%!in%" = Negate("%in%")
+library(ggplot2)
+library(RColorBrewer)
+library(tidyverse)
+library(readxl)
+library(tidyr)
+library(stringr)
+library(data.table)
+library(ggnetwork)
+library(intergraph)
+library(plyr)
+library(dplyr)
+library(plotly)
+library(igraph)
+
+#load data 
+dat2 <- readRDS("FinalProjCleanedv2.Rda")
+x <- readRDS("FinalProjSwimmersCompete.Rda")
+dat2$eventtext <- paste(dat2$distance,dat2$stroke.f)
+##takeout DQ and NS! basically they are missing 
+dat2 <- filter(dat2, place != 0)
+
+df.edges <- readRDS("justswimmer.Rda") #less busy network file
+
+#some summary stats from previous files that I want to recycle
+
+
+#total number of people in each age group
+together <- dat2 %>%  
+  group_by(Year, eventtype, agegroupv2) %>%
+  summarise(num.swimmer = n()) %>% 
+  ungroup()
+
+#number of times participated in the event, regardless of the agegroup
+participate_num <- dat2 %>%  
+  group_by(eventtype,  FullName) %>%
+  summarise(num = n()) %>% 
+  ungroup()
+colnames(participate_num) <- c("eventtype","FullName" , "num_par" )
+
+#number of times get that rank
+place_num <- dat2 %>%  
+  group_by(eventtype,  FullName, place) %>%
+  summarise(num = n()) %>% 
+  ungroup()
+colnames(place_num) <- c("eventtype","FullName" , "place"  , "num_place" )
+
+#swimming together
+together2 <- dat2 %>%  
+  group_by(Year, eventtype, agegroupv2, FullName) %>%
+  summarise(num = n()) %>% 
+  ungroup()
+
+#number of place by event
+par_place <- merge(participate_num, place_num, by = c("FullName", "eventtype"))
+
+
+colnames(df.edges) <- c("swimmer1","swimmer2","weight")
+numedges <- length(df.edges)
+
+#color swimmer by #of places they had
+
+#get a total score=all the place added up divided by # of times participated
+par_place$totalscore <- par_place$place * par_place$num_place  
+#ignore the event and add up score
+score.v1 <- aggregate(totalscore ~ FullName,data=par_place,FUN=sum)
+score.v2 <- aggregate(num_par ~ FullName,data=participate_num,FUN=sum)
+scoresystem <- merge(score.v1,score.v2, by = "FullName")
+scoresystem$truescore <- scoresystem$totalscore/scoresystem$num_par #average place per race
+
+#the smaller the score the more they win!!!
+summary(scoresystem$truescore)
+scoresystem$cate <-  as.numeric(cut_number(scoresystem$truescore, 3))
+scoresystem$cate <- factor(scoresystem$cate, levels = c(1:3), labels = c("gold","sliver","bronze"))
+medals <- c("gold","sliver","bronze")
+medalcolor <- cbind(c("gold","sliver","bronze"),c("#C9B037","#D7D7D7","#6A3805"))
+colnames(medalcolor) <- c("cate","medalcolor")
+withmedals <- merge(scoresystem, medalcolor, by = "cate")
+
+
+#merge scoresystem with original data
+dat3 <- merge(dat2,scoresystem, by = "FullName")
+#now define fast v slow swimmers
+#if on average palce 3 per race, then "fast"
+dat3$fastfish <- ifelse(dat3$truescore <= 3,1,0)
+
+
+#define the speed: yard/second
+dat3$ydpersec <- dat3$distance/dat3$finaltimev2
+
+name <- unique(dat3$FullName)
+namedat <- as.data.frame(name)
+namedat$ID <- c(1:length(namedat$name))
+names(namedat) <- c("FullName","UniqueID")
+
+dat3 <- merge(dat3, namedat, by.x = "FullName")
+dat3$eventname_full <- paste(dat3$distance,dat3$stroke.f)
+dat3$fastfish <- factor(dat3$fastfish)
+#use the baseline age as time invariant variable 
+baseage <- dat3 %>%  
+  group_by(FullName) %>%
+  summarise(baseage = first(Age)) %>% 
+  ungroup()
+dat3 <- merge(dat3, baseage, by = "FullName")
+
+#define the speed: yard/second
+dat3$ydpersec <- dat3$distance/dat3$finaltimev2
+
+#define their stroke type: long-axis strokes, short-axis strokes, IMers
+strokecheck <- select(dat3, "stroke.f", "FullName")
+fav.stroke <- strokecheck %>%  
+  group_by(FullName, stroke.f) %>%
+  summarise(stroke = n()) %>% 
+  ungroup()
+swimtype <- spread(fav.stroke, stroke.f, stroke)
+head(swimtype)
+swimtype$longaxis <- rowSums(swimtype[,2:3], na.rm = TRUE)
+swimtype$shortaxis <- rowSums(swimtype[,3:4], na.rm = TRUE)
+swimtype$im <- rowSums(swimtype[,2:6]) #if no NA then IMer - they attended ALL five events!
+swimtype$im <- ifelse(is.na(swimtype$im)  == TRUE , 0, 1)
+# if butterfly + breaststroke > free style + backstroke then short axis, long axis is the other way, IMer are IMers
+#are there draws?
+
+check <- filter(swimtype, swimtype$longaxis== swimtype$shortaxis)#yes
+#hmm, so if they swim butterfly then they are shortaxis swimmer!!!
+check$axis <- ifelse(is.na(check$Butterfly)  == TRUE, "long-axis", "short-axis")
+check <- check[,c("FullName","axis")]
+swimtype$axis <- ifelse(swimtype$longaxis > swimtype$shortaxis, "long-axis", "short-axis")
+
+swimtypev2 <- merge(swimtype,check, by="FullName", all.x = TRUE)
+swimtypev2$axis.final <- ifelse(is.na(swimtypev2$axis.y) == TRUE, swimtypev2$axis.x, swimtypev2$axis.y)
+swimtypev2$axis.final2 <- ifelse(swimtypev2$im == 1 , "IMer", swimtypev2$axis.final)
+names(swimtypev2)
+swimtypev2 <- swimtypev2[,c(1,13)]
+dat3 <- merge(dat3, swimtypev2, by = "FullName")
+names(dat3)
+dat4 <- dat3[,c("FullName",  "eventcode" , "Age" , "Gender",  "entrytime",  "final_time", "finallane" ,     "place", "Year" , "distance" ,  "stroke" , "stroke.f" , "entrytimev2" , "finaltimev2" ,  "agegroupv2", "cate"  , "fastfish" ,"ydpersec", "UniqueID" , "eventname_full", "baseage" , "axis.final2"  )]
+
+
+
+saveRDS(dat4, file="forinference.Rda")
+
+
+```
+ Prepare data for cross sectional analysis
+ 
+```{r}
+#prepare for cross-sectional data
+dat <- readRDS("forinference.Rda")
+#outcome is attending 2019 meet or not. It is a time invariant var
+dat$par_2019 <- ifelse(dat$Year == 2019, 1, 0)
+#predictors are: # of past participation, age at baseline, gender, fish cate and stroke type, all are  time invariant variables
+#cal # of past participation - one entry as one participate
+x <- dat %>%  
+  filter(Year != 2019) %>%  # do not count for participation in 2019
+  group_by(FullName) %>%  
+  summarise(par_byevent = n()) %>% 
+  ungroup()
+#cal # of past participation - multiple entry as one participate - one year =1 particiaption
+x2 <- unique(dat[,c('FullName','Year')])
+x2 <- x2 %>%  
+  filter(Year != 2019) %>%  # do not count for participation in 2019
+  group_by(FullName) %>%  
+  summarise(par_byyear = n()) %>% 
+  ungroup()
+x.all <- merge(x,x2, by="FullName")
+datv2 <- merge(dat,x.all, by="FullName")#should be 43061obs
+
+#collapse data to one person per row, as all the variables I need is time invariant 
+dat.cs <- datv2[,c("FullName" , "Gender", "cate" ,  "fastfish",  "baseage", "axis.final2" , "par_2019", "par_byevent","par_byyear"  )]
+dat.cs2 <- dat.cs %>% 
+  distinct(FullName, .keep_all = T)
+saveRDS(dat.cs2, file="forinference_crosssectional.Rda")
+
+
+```
+ 

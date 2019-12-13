@@ -1,0 +1,385 @@
+---
+title: "Final_document of data cleaning"
+author: "Futu Chen"
+date: "11/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This RMD holds my steps of data cleaning from the very beginning
+
+**Please carefully read through the comments before hitting "kint". Make sure that you acknowledge that it costs time running them**  
+**All the outputs are saved as a RDS. My other codes will use the cleaned datasets**
+
+
+## step 1: Read in raw data. Preliminary data cleaning. Lots of tears.
+```{r}
+"%!in%" = Negate("%in%") #define "not in" - will use multiple times
+
+#bring packages
+library(ggplot2)
+library(RColorBrewer)
+library(tidyverse)
+library(readxl)
+library(tidyr)
+library(stringr)
+library(data.table)
+library(ggnetwork)
+library(intergraph)
+library(plyr)
+library(plotly)
+
+#try to convert .cl2 race file into editable files
+#use 2018 as a try
+temp <- read_excel("scy2018 NOSPLIT.xlsx")
+temp <- temp[-1,] #get rid of the first line
+colnames(temp) <- "mess" #name the only col as mess
+#only look for individual events
+temp <- subset(temp, startsWith(as.character(mess), "D02")) #D02 indicates individual event
+# .cl2 file is organized by character space, so split it by the string length
+temp2 <- separate(temp, mess, into = c("eventcode", "Name","USSNUM","othermess","agegender","eventtype","eventnum","agegroup","entrytime","prelim_time","final_time","prelim_heat","prelim_lane","finalheat","finallane","place","point","else"), sep = c(11,39,55,63,67,72,76,88,97,106,124,126,128,130,132,135,138,142,153), remove = FALSE)
+
+#'point' and 'else' need to move one col left
+temp2$place <- temp2$point
+temp2$point <- temp2[,19]
+temp2 <- temp2[,2:18]#drop mess and last col
+#split name into last name and first name
+temp3 <- temp2  %>%
+  separate(Name, c("LastName", "FirstName"), ",")
+#split age gender - orginal format is ageMM/ageFF
+temp3 <- temp3  %>%
+  separate(agegender, c("Age", "Gender"), 2)
+names(temp3)
+temp3 <- temp3[, c(1,2,3,6,7,8,10,11,13,17,18,19)]
+str(temp3)#last column is tricky, throw out!
+temp3 <- temp3[,-12]
+#save as a csv file
+write.csv(temp3, "NESCY2018cleaned.csv")
+
+
+#####try 2019
+#2019
+temp <- read_excel("SCY2019 NOSPLIT.xlsx")
+temp <- temp[-1,]
+colnames(temp) <- "mess"
+#only look for individual events
+temp <- subset(temp, startsWith(as.character(mess), "D02"))
+temp2 <- separate(temp, mess, into = c("eventcode", "Name","USSNUM","othermess","agegender","eventtype","eventnum","agegroup","entrytime","prelim_time","final_time","prelim_heat","prelim_lane","finalheat","finallane","place","point","else"), sep = c(11,39,55,63,67,72,76,88,97,106,124,126,128,130,132,135,138,142,153), remove = FALSE)
+temp2$place <- temp2$point
+temp2$point <- temp2[,19]
+temp2 <- temp2[,2:18]#drop mess and last col
+temp3 <- temp2  %>%
+  separate(Name, c("LastName", "FirstName"), ",")
+temp3 <- temp3  %>%
+  separate(agegender, c("Age", "Gender"), 2)
+names(temp3)
+temp3 <- temp3[, c(1,2,3,6,7,8,10,11,13,17,18,19)]
+temp3 <- temp3[,-12]
+#check to see if there is only MM and FF, make sure that columns are seperated well
+table(temp3$Gender)
+write.csv(temp3, "NESCY2019cleaned.csv")
+
+
+##try#2017
+temp <- read_excel("SCY2019 NOSPLIT.xlsx")
+temp <- temp[-1,]
+colnames(temp) <- "mess"
+#only look for individual events
+temp <- subset(temp, startsWith(as.character(mess), "D02"))
+temp2 <- separate(temp, mess, into = c("eventcode", "Name","USSNUM","othermess","agegender","eventtype","eventnum","agegroup","entrytime","prelim_time","final_time","prelim_heat","prelim_lane","finalheat","finallane","place","point","else"), sep = c(11,39,55,63,67,72,76,88,97,106,124,126,128,130,132,135,138,142,153), remove = FALSE)
+
+temp2$place <- temp2$point
+temp2$point <- temp2[,19]
+temp2 <- temp2[,2:18]#drop mess and last col
+temp3 <- temp2  %>%
+  separate(Name, c("LastName", "FirstName"), ",")
+temp3 <- temp3  %>%
+  separate(agegender, c("Age", "Gender"), 2)
+names(temp3)
+temp3 <- temp3[, c(1,2,3,6,7,8,10,11,13,17,18,19)]
+temp3 <- temp3[,-12]
+#check to see if there is only MM and FF, make sure that columns are seperated well
+table(temp3$Gender)
+write.csv(temp3, "NESCY2017cleaned.csv")
+
+```
+
+
+After inspecting my .csv files that I made for 2017, 2018 and 2019, I feel confident of letting the loop to take over
+
+```{r}
+#Loop over the other years
+year <- c(2009:2016)
+#place holders
+tb <- NULL
+tb2 <- NULL
+for (i in 1:length(year)) {
+  temp <- read_excel(paste0("SCY",year[i]," NOSPLIT.xlsx"))
+  temp <- temp[-1,]
+  colnames(temp) <- "mess"
+
+  temp <- subset(temp, startsWith(as.character(mess), "D02"))
+  temp2 <- separate(temp, mess, into = c("eventcode", "Name","USSNUM","othermess","agegender","eventtype","eventnum","agegroup","entrytime","prelim_time","final_time","prelim_heat","prelim_lane","finalheat","finallane","place","point","else"), sep = c(11,39,55,63,67,72,76,88,97,106,124,126,128,130,132,135,138,142,153), remove = FALSE)
+  temp2$place <- temp2$point
+temp2$point <- temp2[,19]
+temp2 <- temp2[,2:18]#drop mess and last col
+temp3 <- temp2  %>%
+  separate(Name, c("LastName", "FirstName"), ",")
+temp3 <- temp3  %>%
+  separate(agegender, c("Age", "Gender"), 2)
+names(temp3)
+temp3 <- temp3[, c(1,2,3,6,7,8,10,11,13,17,18,19)]
+temp3 <- temp3[,-12]
+#check to see if there is only MM and FF, make sure that columns are seperated well
+ tb <- table(temp3$Gender)
+ tb2 <- cbind(tb,tb2)
+  write.csv(temp3, paste0("NESCY",year[i],"cleaned.csv"))
+}
+
+#create a longitudinal file 
+#one year per person per row - long format
+year <- c(2009:2019)
+all <- NULL
+for (i in 1:length(year)) {
+  temp <- read.csv(paste0("NESCY",year[i],"cleaned.csv"))
+  temp$Year <- year[i]
+  all <- rbind(all,temp)
+}
+table(all$Gender)
+str(all)
+ID <- c(1:43902)
+all$ID <- ID
+
+write.csv(all, "NESCYtenyears.csv", row.names = FALSE)
+
+```
+
+
+So far I have compiled all the data from 2009 to 2019 into a long format.
+
+However, I need to do some extra works to create the variables of interest:  
+1. Time variable: the ultimate goal is to have a "speed" indicator. We may want something that has the unit "yard per second". I will transform the minute:second:milionsecond data into seconds.  
+2. Stroke indicator: in the raw data (race file), the event is coded as XXXX1, XXXX2, XXXX3, XXXX4 and XXXX5, where the last number indicates the stroke, and whatever before that indicates the distance   
+
+
+```{r}
+all <- read.csv("NESCYtenyears.csv")
+#need to work on eventtype and time data 
+
+####################################### Working with time ###############################
+#get rid of the "Y" indicating SCY
+all$entrytime <- gsub("Y", "",all$entrytime)
+all$final_time <- gsub("Y", "", all$final_time)
+#last digit of the event type should be stroke
+all <-  mutate(all, eventtypec = as.character(eventtype))
+all <- all %>% separate(eventtypec, into = c('distance', 'stroke'), sep = -1, convert = TRUE)
+#label strokes
+all$stroke.f <- factor(all$stroke, levels=c(1:5), labels = c("Freestyle","Backstroke","Breaststroke","Butterfly","IM"))
+#need to work with time
+
+#set milionsecond as its own cell
+
+all2 <- all %>% separate(entrytime, into = c('mmss', 'msec'), sep =-2, remove = FALSE)
+all2$mmss <- gsub("[.]", "", all2$mmss)
+#time will be in seconds
+all2$entrytimev2 <- sapply(strsplit(all2$mmss,":"),
+  function(x) {
+    x <- as.numeric(x)
+    x[1]*60+x[2] #calcuate senconds
+  }
+)
+#this function cannot work for data that is already in seconds
+#if there is no minutes, seconds will be NA, so I need to keep seconds as is
+all2$entrytimev2 <- ifelse(is.na(all2$entrytimev2 == TRUE), as.numeric(all2$mmss), as.numeric(all2$entrytimev2))
+#now add milionsecond back
+all2$entrytimev2  <- all2$entrytimev2  + 0.01* as.numeric(all2$msec)
+
+#do same for final time
+all3 <- all2 %>% separate(final_time, into = c('mmss', 'msec'), sep =-2, remove = FALSE)
+all3$mmss <- gsub("[.]", "", all3$mmss)
+#time will be in seconds
+all3$finaltimev2 <- sapply(strsplit(all3$mmss,":"),
+  function(x) {
+    x <- as.numeric(x)
+    x[1]*60+x[2] #calcuate senconds
+  }
+)
+#SECONDS will be NA, so I need to keep seconds as is
+all3$finaltimev2 <- ifelse(is.na(all3$finaltimev2 == TRUE), as.numeric(all3$mmss), as.numeric(all3$finaltimev2))
+all3$finaltimev2  <- all3$finaltimev2  + 0.01* as.numeric(all3$msec)
+all3 <- as.data.frame(all3)
+check <- all3[c("final_time","finaltimev2")]
+
+#there are some NAs, this is due to the DQ and NS (disqualify and no show)
+
+#YEAH! Done with cleaning! drop cols that I do not want
+names(all3)
+all3 <- all3[c( "ID" , "eventcode","LastName", "FirstName"  , "Age", "Gender",   "agegroup"   , "entrytime"   ,"final_time" , "finallane"  , "place"   ,    "Year" ,  "ID"  ,   "distance" ,   "stroke"  ,    "stroke.f"  ,  "entrytimev2" ,"finaltimev2")]
+all3$Gender <- ifelse(all3$Gender == "MM", "Male", "Female")
+saveRDS(all3, file="FinalProjCleaned.Rda")
+```
+
+
+## step 1 continu'd: More cleaning. 
+
+Now I need one more variable:
+3. Age group, which is unique to Masters Swimming.
+
+
+```{r}
+dat <- readRDS("FinalProjCleaned.Rda")
+club <- read.csv("Team score.csv") 
+names(dat)
+#group age into age group: swim meets are ranked by age groups : https://www.usms.org/-/media/usms/pdfs/volunteer%20central/rule%20book/2019/part%201.pdf?la=en&hash=DAD58443EFF88175A6816090FA628300DECFF720
+#Individual Events—18–24, 25–29, 30–34, 35–39, 40–44, 45–49, 50–54,55–59, 60–64, 65–69, 70–74, 75–79, 80–84, 85–89, 90–94, 95–99, 100–104 
+agebreaks <- seq(20,95,5)
+#floor to 18 yo
+agebreaks[1] <- 18 
+agelabels <- c("18-24","25–29", "30–34", "35–39", "40–44", "45–49", "50–54","55–59", "60–64", "65–69", "70–74", "75–79", "80–84", "85–89", "90–94")
+setDT(dat)[ , agegroupv2 := cut(Age, breaks = agebreaks, right = FALSE, labels = agelabels)]
+#check
+check <- dplyr::filter(dat, as.numeric(year) == 2019 & (distance == 100) & (stroke == 4) & (agegroupv2 == "25–29") & Gender == "Male")
+sum(duplicated(check$place) == TRUE) #no dupilcations! check success
+
+#add one more column that calc the difference btw seed time and final time (in seconds)
+
+dat2 <- dat %>% mutate(timediff = finaltimev2 - entrytimev2)
+summary(dat2$timediff)#842 NAs-checked, either DQ or NS at final
+#it may be more reasonable to see diff time by yards!
+dat2 <- dat2 %>% mutate(timediff.peryd = timediff/distance)
+
+```
+
+## step 2: Construct network data. Play from long to wide, wide to long.
+
+The data we have now is in long format. If I want to get summary stats for individuals, I need to convert them to wide format.
+Additionally, I need some summary statistics by different groups. This will help me to get more variables of interet, such as:  
+1. participation numbers: participated years and events in the past;  
+2. average places;  
+3. with whom they competed with;
+4. what their speed looks like comparing all 3582 swimmers;  
+5. what their stroke type is;  
+etc.
+
+```{r}
+library(dplyr)
+# returns string w/o trailing whitespace, ref: https://stackoverflow.com/questions/2261079/how-to-trim-leading-and-trailing-whitespace
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+dat2$FullName <- as.character(paste(dat2$LastName, dat2$FirstName,sep=","))
+dat2$FullName <- trim(dat2$FullName)
+
+swimmername <- dat2$FullName
+uniquename <- as.data.frame(unique(swimmername))
+sum(duplicated(uniquename))
+
+ 
+dat2$eventtype <- as.numeric(paste0(dat2$distance, dat2$stroke))
+saveRDS(dat2, file="FinalProjCleanedv2.Rda")
+
+#total number of people in each age group
+together <- dat2 %>%  
+  group_by(Year, eventtype, agegroupv2) %>%
+  summarise(num.swimmer = n()) %>% 
+  ungroup()
+
+#number of times participated in the event, regardless of the agegroup
+participate_num <- dat2 %>%  
+  group_by(eventtype,  FullName) %>%
+  summarise(num = n()) %>% 
+  ungroup()
+colnames(participate_num) <- c("eventtype","FullName" , "num_par" )
+
+place_num <- dat2 %>%  
+  group_by(eventtype,  FullName, place) %>%
+  summarise(num = n()) %>% 
+  ungroup()
+colnames(place_num) <- c("eventtype","FullName" , "place"  , "num_place" )
+
+
+together2 <- dat2 %>%  
+  group_by(Year, eventtype, agegroupv2, FullName) %>%
+  summarise(num = n()) %>% 
+  ungroup()
+
+par_place <- merge(participate_num, place_num, by = c("FullName", "eventtype"))
+
+
+
+```
+
+
+Here I tried some network graph approach. However, the file is too large to share online and too busy to insert in my app.
+
+
+```{r}
+library(plotly)
+library(igraph)
+
+#edges
+#pair swimmers names. If they competed with each other, then they formed a pair
+#by event, year, age group and gender group
+#event.list <- unique(dat2$eventtype)
+year.list <- unique(dat2$Year)
+#agroup.list <- unique(dat2$agegroupv2)
+#gender.list <- unique(dat2$Gender)
+
+#get a data that list who competed with who
+
+#If ran once or loaded data, do not run the following loop again!!!
+#####################  WARNING   ##############################
+#####################TIME CONSUMING!!!####################
+#####################  WARNING   ##############################
+#####################TIME CONSUMING!!!####################
+x <- NULL
+for (y in 1:length(year.list)) {
+  temp1 <- filter(dat2, Year == year.list[y])
+  gender.list <- unique(temp1$Gender)
+  for (g in 1:length(gender.list)) {
+    temp2 <- filter(temp1, Gender == gender.list[g])
+    agroup.list <- unique(temp2$agegroupv2)
+     for (a in 1:length(agroup.list)) {
+        temp3 <- filter(temp2, agegroupv2  == agroup.list[a])
+        event.list <- unique(temp3$eventtype)
+         for (e in 1:length(event.list)) {
+          # if (unique(temp3$eventtype) %in% event.list) {
+           temp4 <- filter(temp3, eventtype  == event.list[e])
+           
+          #temp4 should have unique names that "competed" (theoritically) in the same group. in reality they do not because competition is arranged by seed time
+           #NEED to clearify on the website
+           player <- temp4$FullName
+           pairs <- as.data.frame(expand.grid(player,player))
+           colnames(pairs) <- c("swimmer1","swimmer2")
+           pairs$year <- year.list[y]
+           pairs$gender <- gender.list[g]
+           pairs$event <- event.list[e]
+           pairs$agegroup <- agroup.list[a]
+           x <- rbind(x, pairs)
+          # }#if
+        }#e
+     }#a
+  }#g
+}#y
+
+##################### END Of WARNING   ##############################
+##################### END OF WARNING   ##############################
+
+#delete duplicats
+x<-x[!(x$swimmer1 == x$swimmer2),]
+saveRDS(x, file="FinalProjSwimmersCompete.Rda")
+
+x <- readRDS("FinalProjSwimmersCompete.Rda") #this will be the network data I want to use
+
+justswimmer <- x[,c(1,2)]
+justswimmer <- ddply(justswimmer,.(swimmer1,swimmer2),nrow) 
+check <- filter(x, swimmer1 %in% "Keil, Mark A" & swimmer2 == "Garr, Michael T")#should be 65 obs, checked 
+
+```
+
+
+I will do more cleaning down the road, but let's stop here and save our data.
+
+
+-----END of cleaning------
