@@ -1,37 +1,48 @@
-## Welcome to GitHub Pages
+## Welcome to My Page
 
-You can use the [editor on GitHub](https://github.com/madaopt/swimmers.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+### It is under construction. For course submission only. More information to come.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### For grading:
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+*If you are looking for DATA CLEANING*, please head to “raw data” folder, where you can find:
 
-```markdown
-Syntax highlighted code block
+All the raw data I used for this project. Any .CL2 file has been converted to a text file.
 
-# Header 1
-## Header 2
-### Header 3
+“Data cleaning final doc.Rmd” is the code for data cleaning. The output are longitudinal file that collapsed 11 years of individual meet results (2009-2019).
 
-- Bulleted
-- List
+“Data cleaning for inference final.Rmd” is the code for additional cleaning for both visualization and inference. 
 
-1. Numbered
-2. List
+***
+***
 
-**Bold** and _Italic_ and `Code` text
+*If you are looking for VISUALIZATION*, please head to “visual” folder, where you can find:
 
-[Link](url) and ![Image](src)
-```
+All the cleaned data in .rda format.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Code (shiny app) for generating the visualization.
 
-### Jekyll Themes
+Code (plotly) for generating the animated visualization.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/madaopt/swimmers.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+*If you are looking for INFERENCE*, head to “inf” folder, where you can find:
+ 
+Code for inference (and also I used this rmd file for my webpage).
 
-### Support or Contact
+***
+***
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Finally, *if you are looking for WEBSITE-related code*, please head to “my-website”, where you can find:
+
+Rmd files for each website page.
+
+Data used for building the website.
+
+.css style file
+
+***
+***
+If you are CONFUSED, please shoot me an email before you taking my points off, please!!! 
+
+
+
+
