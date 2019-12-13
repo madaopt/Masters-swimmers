@@ -41,6 +41,7 @@ Data used for building the website.
 
 ***
 ***
+There may be mistakes in pushing the files, so....
 If you are CONFUSED, please shoot me an email before you taking my points off, please!!! 
 
 
