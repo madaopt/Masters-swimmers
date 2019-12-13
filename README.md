@@ -24,9 +24,9 @@ Code (shiny app) for generating the visualization.
 
 Code (plotly) for generating the animated visualization.
 
-*If you are looking for INFERENCE*, head to “inf” folder, where you can find:
+*If you are looking for INFERENCE*, head to “my-website” folder, where you can find:
  
-Code for inference (and also I used this rmd file for my webpage).
+Code for inference called inf.rmd (and also I used this rmd file for my webpage).
 
 ***
 ***
