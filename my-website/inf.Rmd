@@ -1,0 +1,410 @@
+---
+title: "Inference"
+description: |
+  Cross sectional analysis & longitudinal analysis looking at participation and the association with aging
+author:
+  - name: Futu Chen
+    url: https://github.com/madaopt/Masters-swimmers
+output: distill::distill_article
+---
+
+### On this page...
+I am going to dive deeper into some formal analysis, with the hope to answer my study questions. I will begin with some cross-sectional analysis (a snapshot of the data, one dimension of time), where I used past performance and attendance to predict participation in 2019. I then moved into longitudinal analysis, where I am more interested in the association between aging (change in time) and meet performance. I will walk through different model specifications, outputs and my own interpretations. Lastly, I will discuss my limitations and future directions.   
+
+***
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+"%!in%" = Negate("%in%")
+library(ggplot2)
+library(RColorBrewer)
+library(tidyverse)
+library(readxl)
+library(tidyr)
+library(stringr)
+library(plyr)
+library(dplyr)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+if (!require("nlme")) install.packages("nlme")
+library("nlme")
+
+
+```
+The dataset I worked with is a cleaned dataset (for the detail of cleaning - see github code) of swimming speed measurements (yard per second) from the NELMSC SCY Championship database. The key variables include:
+
+* `yrdpersec` = yard per second, the outcome, is calculated as distance (in yards)/seconds used
+* `fastfish` = indicator for fish type: 1 for those who on average, get 1st, 2nd or 3rd place per race, 0 for others (A 570:2989 ratio) 
+* `axis` = indicator for swimmer type: **Long-axis swimmers** are those who swam more long axis strokes (free style + back stroke) than short axis strokes (butterfly + breaststroke); **Short-axis swimmers** are those who swam more short axis strokes than long axis strokes; If there is a draw (# of long-axis stroke events = # of short-axis stroke events), then is will be determined by whether they swam the butterfly or not. If they did, then they will be a short-axis swimmer; **IMers** are those who swam all five events, no matter how many times they swam.  
+As you can tell, the more events a person swam, the more “accurate” this measure would be.  
+* `gender` = Males and Females
+* `eventname_full` = a time-varying variable measuring the event they entered
+* `Year` = Time indicator, ranges from 2009 - 2019  
+* `baseage` = Baseline age indicator, recorded as the age when first entered the NELMSC SCY Championship
+
+
+***
+### Cross-sectional Analysis  
+#### Study question:
+The overall study question for cross-sectional analysis is to see whether a swimmers’ past participation pre-2019, gender, fish type, stroke type and baseline age (all are time-invariant variables) predicts/associated with the participation in 2019. 
+
+Let me put forward some limitations: I agree that to answer this question, we lost many potentially important variables, such as move indicator, health status and helpful time varying variables. We cannot interpret those models as predictive models as I will strongly question the predictive power. Let’s serve those cross-sectional analysis an insight of how swimmers’ characteristics on average *associate with* participation in 2019.  
+
+##### OUTCOME: 
+Participation in 2019 (recorded as 0/1)  
+
+#### Predictors are:  
+
+* `par_byyear` # of time participated in the swim meet prior to 2019 - regardless of the events participated, so max per person is 1 per year  
+* `gender`   
+* `fastfish`     
+* `axis`      
+* `baseage`  
+
+Aside: I also tried to define "past participation" as 1 event entry = 1 participation (so that there will be multiple participations per year per person). Using either of them do not change my result. I ended up only use the variable `par_byyear`, where 1 meet entry (instead of event entry) = 1 participation (to that max 1 participation per year per person)
+
+For more details about those variables, you can visit in the visualization page (in tab 2)  
+  
+
+***
+
+#### Restuls:
+
+After taking a few looks of my data, I firstly use one variable at a time, and then compare it with the full model to see how the coefficient changed comparing unconditional and conditional logistic regression.
+
+```{r , layout="l-screen-inset shaded"}
+knitr::opts_chunk$set(echo = FALSE)
+#read in cleaned cross-sectional data
+dat.cs2 <- readRDS("forinference_crosssectional.Rda")
+#str(dat.cs)
+dat.cs2$par_2019 <- factor(dat.cs2$par_2019)
+dat.cs2$axis.final2.f <- factor(dat.cs2$axis.final2)
+dat.cs2$gender.f <- factor(dat.cs2$Gender)
+
+#one at a time
+md1 <- glm(par_2019 ~ gender.f, data = dat.cs2, family = binomial(link = logit))
+#summary(md1)#directiion and strength does not change much in a full model
+md2 <- glm(par_2019 ~ fastfish, data = dat.cs2, family = binomial(link = logit))
+#summary(md2)#directiion and strength does not change much in a full model
+md3 <- glm(par_2019 ~ baseage, data = dat.cs2, family = binomial(link = logit))
+#summary(md3)#directiion and strength does not change at all a full model
+md4 <- glm(par_2019 ~ axis.final2, data = dat.cs2, family = binomial(link = logit))
+#summary(md4)#directiion and strength changed in a full model
+md5 <- glm(par_2019 ~ par_byyear, data = dat.cs2, family = binomial(link = logit))
+#summary(md5)#directiion and strength did not change too much in a full model
+mdfull <- glm(par_2019 ~ gender.f + fastfish + baseage + axis.final2 + par_byyear,  data = dat.cs2, family = binomial(link = logit))
+
+library(glmmTMB)
+
+tab_model(md1, md2, md3, md4, md5, mdfull,  show.p = FALSE, pred.labels = c(
+  "intercept", "Gender-Male (ref=Female)", "Fastfish (ref=others)", "Base age", "Swimmer type - long axis (ref=IMer)", "Swimmer type - short axis (ref=IMer)", "Past participation"
+), dv.labels = c("Simple model A", "Simple model B", "Simple model C", "Simple model D", "Simple model E", "Full model")
+)
+
+```
+
+From the table we can see that the direction and strength of some predictors did not change too much from “single model” to a full model. Interestingly, before adjustment, the swimmer type – long and short axis stroke swimmers, comparing to IMers, were more likely to participate in the swim meet in 2019. While after adjusting for others, they became less likely and the coefficients became significant. Since this is an associational model, I would not use the word “confounding”.  What I can tell is that, the swimmer type is correlated with other characteristics, and that correlation created noise when we only looking at the simple models. 
+
+Let’s just look at the full model for now.  
+$$\log\left(\frac{p_{par2019}}{1 - p_{par2019}}\right) = \beta_0 + \beta_1Gender+ \beta_2FastFish + \beta_3BaseAge + \beta_4Swimmer Type + \beta_5NumberOfPastParticipation $$  
+Surprisingly, in the fully adjusted model, all the variables are significantly associated with participation in 2019 excepting gender. Being a fast fish, after conditioning on other variables, seems to have a strong association with participations (OR=1.57, 95% CI: 1.16 – 2.10). Although baseline age is significantly associated with the outcome, the effect size is not that big (OR=1.03). Another strong association is the past participation. The more people participated in the past meet is associated with the less odds of participating in 2019 (OR=0.65, 95% CI: 0.57 – 0.73).  
+
+I feel the result being understandable. It is good to see that conditioning on other variables, age and gender does not have too much relationship with the participation in 2019.    
+Those who on average placed the top 3 in their game are for sure more likely to do it again. The negative association with the past participation may be attributed to the omitted variables. 
+
+***
+
+### Longitudinal Analysis  
+
+Reference: PHS 2000A Lab 11: Longitudinal Analysis, 2018
+
+### Step 0. Data preparation 
+
+To reduce the time occastion (because the more time points we have, we actually lost power by imposing the unrestricted correlation matrix), we need to reduce the # of measurements and # or observations.
+Now we need to construct a data that has a "balanced" design - each individual should be measured at the smae # of occastions.
+
+
+### Step 1. Visualize individual trajectories
+To get an idea of what our swimmer's trajectories look like as the year goes from 2009 to 2019, I plotted the speed trajectories for three events of interest:  
+
++ 50 Freestyle: I use this to evaluate the speed of sprinting 
++ 1650 Freestyle: I use this to evaluate the speed of long-distance swimming  
++ 100 IM: I use this to evaluate the speed of strokes  
+
+
+```{r}
+knitr::opts_chunk$set(echo = FALSE)
+
+
+dat <- readRDS("forinference.Rda")
+
+dat %>%
+  filter(eventname_full == "50 Freestyle") %>%
+  ggplot(aes(x = Year, y = ydpersec, group = UniqueID, color = fastfish))+
+  geom_line(alpha=0.6) + 
+ scale_x_continuous(breaks = c(2009:2019))+
+  ylim(0.5,2.8)+
+  facet_grid( Gender ~.) +
+  theme( axis.text.x = element_text(angle = 45, vjust = 0.5))+
+  labs(x = "Year", y = "Speed: yard per second")+
+  ggtitle("Timeplot of speed against time: 50 Yard Free")
+
+dat %>%
+  filter(eventname_full == "1650 Freestyle") %>%
+  ggplot(aes(x = Year, y = ydpersec, group = UniqueID, color = fastfish))+
+  geom_line(alpha=0.6) + 
+  ylim(0.8,2)+
+  scale_x_continuous(breaks = c(2009:2019))+
+  facet_grid( Gender ~.) +
+  theme( axis.text.x = element_text(angle = 45, vjust = 0.5))+
+  labs(x = "Year", y = "Speed: yard per second")+
+  ggtitle("Timeplot of speed against time: 1650 Yard Free")
+
+dat %>%
+  filter(eventname_full == "100 IM") %>%
+  ggplot(aes(x = Year, y = ydpersec, group = UniqueID, color = fastfish))+
+  geom_line(alpha=0.6) + 
+  ylim(0.8,2)+
+  scale_x_continuous(breaks = c(2009:2019))+
+  facet_grid( Gender ~.) +
+  theme( axis.text.x = element_text(angle = 45, vjust = 0.5))+
+  labs(x = "Year", y = "Speed: yard per second")+
+  ggtitle("Timeplot of speed against time: 100 Yard IM")
+```
+
+From the figures, it seems that there are not very much between individual variations among non-fast fishes (so non-fast fishes are a more homogenous group), but there are lots of between and within individual variations among fast fishes, which can be contributed by the baseline age. 
+Since this is a longitudinal data, we will for sure observe within individuals and between individual speed difference. We can account for this with a random intercept and/or a random slope. 
+
+
+### Step 2. Model building
+
+**Ideally:**
+Assuming that everyone's speed changes in the same way over time, but that some people's trajectories are going to be shifted higher or lower depending on their gender, baseline age (at their first entry to the race), swimmer type, and their "fish type".   
+
+We also might be interested in knowing how much people's trajectories differ from one another: are speed trajectories extremely variable, or does everyone basically experience the same change as the year goes up (people aging)? 
+ 
+To answer these questions, we can add a random slope for time, and examine the G matrix it gives us.
+
+I will fit three models for each event (start with very simple):
+
+* Model 1: Allows each individual to begin their trajectory at a different (randomly determined) point
+* Model 2: Allows each individual to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope
+* Model 3: Allows each individual to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope for time, AND allows outcomes to vary by fish type, gender, and baseline age  
+ 
+Again, here are our models:  
+
+* Model 1: Allows each individual to begin their trajectory at a different (randomly determined) point 
+
+$$Y_{ij} = \beta_0 + b_{0i} + e_{ij}$$ 
+where i denotes individuals and j denotes time. We also assume that  $e_{ij} \sim \mathrm{N} (0,\sigma^2_e)$ and   $b_{0i} \sim \mathrm{N} (0,\sigma^2_{b0i})$
+
+* Model 2: Allows each individual to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope
+$$Y_{ij} = \beta_0 + b_{0i} + (\beta_1 + b_{1i})year_{ij} + e_{ij}$$  
+
+where i denotes individuals and j denotes time. We also assume that  $e_{ij} \sim \mathrm{N} (0,\sigma^2_e)$ 
+and 
+$$\left[\begin{array}
+{rrr}
+b_0   \\
+b_1 \\
+\end{array}\right]
+\sim 
+MVN (0,\left[\begin{array}
+{rrr}
+\sigma^2_{b0} & \sigma_{b0b1}  \\
+\sigma_{b0b1} & \sigma^2_{b1}  \\
+\end{array}\right])$$
+
+* Model 3: Allows each individual to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope for time, AND allows outcomes to vary by fish type, swimmertype, gender, and baseline age  
+
+$$Y_{ij} = \beta_0 + b_{0i} + (\beta_1 + b_{1i})year_{ij} + \beta_iZ_i+ e_{ij}$$  
+Where $Z_i$ are the time-invariant variables. Similarly:
+ $$e_{ij} \sim \mathrm{N} (0,\sigma^2_e)$$
+
+$$\left[\begin{array}
+{rrr}
+b_0   \\
+b_1 \\
+\end{array}\right]
+\sim 
+MVN (0,\left[\begin{array}
+{rrr}
+\sigma^2_{b0} & \sigma_{b0b1}  \\
+\sigma_{b0b1} & \sigma^2_{b1}  \\
+\end{array}\right])$$
+
+**In reality:**
+I soon found out that by adding year as a random and fixed effect, the degree of freedom (df) lost quickly. The more years and the more people we have in the mixed model, the less df we have, and the less likely the model converges.
+
+So, I have to give up the original ideas, but moving to models with random intercept only. I also have to further subset my data to people who swam more than 3 times during the past 10 years, which of course introduced selection bias. For the purpose of this preliminarily analysis, please forgive me.
+
+The final model is written as:
+$$Y_{ij} = \beta_0 + b_{0i} + \beta_1year_{ij} + \beta_iZ_i+ e_{ij}$$  
+
+ $$e_{ij} \sim \mathrm{N} (0,\sigma^2_e)$$ 
+  $$b_{0i} \sim \mathrm{N} (0,\sigma^2_{b0i})$$ 
+ I also tried some interactions, and below are the output from some of my results  
+
+```{r modelbuilding}
+knitr::opts_chunk$set(echo = FALSE)
+
+#subset data by events
+event.list <- c("50 Freestyle","1650 Freestyle","100 IM")
+#load already saved data
+ dat <- readRDS("forinference.Rda")
+ dat$gender.f <- factor(dat$Gender)
+ dat$axis.f <- factor(dat$axis.final2)
+
+ year.list <- c(2010:2019)
+ #want to only include people who come for all those years
+
+ 
+#subset data
+dat_50free <- filter(dat, eventname_full %in% event.list[1] & Year %in% year.list )
+dat_1650free <- filter(dat, eventname_full %in% event.list[2] & Year %in% year.list )
+dat_100im <- filter(dat, eventname_full %in% event.list[3] & Year %in% year.list )
+
+#below are models failed to converge
+# m1 <- lme(ydpersec ~ 1, data=dat_50free, random= ~ 1  | UniqueID ) #intercept only
+#  m2  <- lme(ydpersec ~ 1 + Year , data=dat_50free, random= ~ 1  + Year| UniqueID ) #random intercept and random slope, fail to converger
+#give up other models as the more covariates I drop the more df I lost.
+  
+
+  #final decision, subset data to people who participated over 3 times
+  #only need random intercept
+
+sprint <- dat_50free[c(1,9)]
+sprint$n <- 1
+wide <-  spread(sprint, Year, n)
+wide$sumn <- rowSums(wide[,c(2:11)], na.rm = TRUE) #get total number of years participated
+wide2 <- wide %>% filter(sumn >= 3) #may introduce selection bias
+name <- wide2$FullName #get unique name
+dat_50free2 <- filter(dat_50free, FullName %in% name)#subset data by the unique name
+
+
+distance <- dat_1650free[c(1,9)]
+distance$n <- 1
+wide <-  spread(distance, Year, n)
+wide$sumn <- rowSums(wide[,c(2:11)], na.rm = TRUE) #get total number of years participated
+#wide2 <- wide %>% filter(sumn >= 2) #may introduce selection bias
+name <- wide2$FullName #get unique name
+dat_50free2 <- filter(dat_50free, FullName %in% name)#subset data by the unique name
+
+im <- dat_100im[c(1,9)]
+im$n <- 1
+wide <-  spread(im, Year, n)
+wide$sumn <- rowSums(wide[,c(2:11)], na.rm = TRUE) #get total number of years participated
+wide2 <- wide %>% filter(sumn >= 2) #may introduce selection bias
+name <- wide2$FullName #get unique name
+dat_100im2 <- filter(dat_100im, FullName %in% name)#subset data by the unique name
+
+
+
+
+ if (!require("lme4")) install.packages("lme4")
+    library("lme4")
+#50 free 
+ m1 <- lme(ydpersec ~ 1, data=dat_50free, random= ~ 1  | UniqueID ) #intercept only
+m2 <- lme(ydpersec ~ 1 + Year + baseage , data=dat_50free, random= ~ 1 | UniqueID ) #random intercept only,fixed slope, add age effect, control for baseline age
+m3 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage +  (1  | UniqueID), data = dat_50free2) 
+#expore some interactions
+# m4 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage + fastfish*Year +  (1  | UniqueID), data = dat_50free2)
+m5 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage + gender.f*Year +  (1  | UniqueID), data = dat_50free2)
+# m6 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage + axis.f*Year +  (1  | UniqueID), data = dat_50free2)
+ 
+# # extract the fixed effects 
+#tab_model(m4, show.p=T,show.re.var = T, digits = 4) 
+
+# tab_model(m3, show.p=T,show.re.var = T, digits = 5)   # dv.labels = c("Simple model A", "Simple model B", "Simple model C", "Simple model D", "Simple model E", "Full model")  
+tab_model(m3, m5, show.p=T,show.re.var = T, digits = 5, title = "Mixed effect model with random intercept, 50 yard free", pred.labels = c(
+  "intercept", "Year", "Gender-Male (ref=Female)", "Fastfish (ref=others)", "Swimmer type - long axis (ref=IMer)", "Swimmer type - short axis (ref=IMer)", "Base age", "Gender*Year", dv.labels = c("Random intercept",  "Plus interaction")  
+)
+          
+          )   # dv.labels = c("Simple model A", "Simple model B", "Simple model C", "Simple model D", "Simple model E", "Full model")  
+#tab_model(m6, show.p=T,show.re.var = T, digits = 5)   # dv.labels = c("Simple model A", "Simple model B", "Simple model C", "Simple model D", "Simple model E", "Full model")  
+    
+
+
+#distance
+m3.2 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage +  (1  | UniqueID), data = dat_1650free) 
+#expore some interactions
+ # m4 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage + fastfish*Year +  (1  | UniqueID), data = dat_1650free)
+m5.2 <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage + gender.f*Year +  (1  | UniqueID), data = dat_1650free)
+# m6.2  <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage + axis.f*Year +  (1  | UniqueID), data = dat_1650free)
+
+tab_model(m3.2, m5.2, show.p=T,show.re.var = T, digits = 4, title = "Mixed effect model with random intercept, 1650 yard free", pred.labels = c(
+  "intercept", "Year", "Gender-Male (ref=Female)", "Fastfish (ref=others)", "Swimmer type - long axis (ref=IMer)", "Swimmer type - short axis (ref=IMer)", "Base age", "Gender*Year" )
+          ) 
+
+
+#100im
+m3.im <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage +  (1  | UniqueID), data = dat_100im2) 
+m4.im <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage +  gender.f*Year+ (1  | UniqueID), data = dat_100im2) 
+#m5.im <- lmer(ydpersec ~ 1 + Year + gender.f + fastfish  + axis.f + baseage +  axis.f *Year+ (1  | UniqueID), data = dat_100im2) 
+tab_model(m3.im,  m4.im, show.p=T,show.re.var = T, digits = 4, title = "Mixed effect model with random intercept, 100 yard IM",  pred.labels = c(
+  "intercept", "Year", "Gender-Male (ref=Female)", "Fastfish (ref=others)", "Swimmer type - long axis (ref=IMer)", "Swimmer type - short axis (ref=IMer)", "Base age", "Gender*Year" ))
+
+
+```
+
+
+Year (aging) is the variable that I am interested in. We see that the estimate actually looks similar comparing three distinct events. Gender is an influential effect modifier across all three events. I would not go into too much depth because of the degree of freedom we have to fit the mixed model.
+
+Something I also want to highlight is the ICC: the ratio of the between-individual variance to the total variance.  Here ICC is all around 0.95, so we have more between individual variations than within individual variations! We probability do not need to fit the mixed model, IF WE CHANGE OUR STUDY QUESTION, and only interested in population level change.
+
+To find more about marginal model, please refer to the visualization page.
+
+Obviously, I ran out of my capability to tell the whole story, but I think there are more we can learn from this dataset. If you are interested in doing more, please find my contact information at the bottom of this page. 
+
+***  
+#### Limitations!
+## Limitations!!
+
+I have to shout out to the world on this…despite it is at the very end of the page…
+
+* Selection bias: Basically, people did not show up in the following years simply because…that they moved, which could be non-informative. Other informative censoring, such as injury from swimming, can also be true. Showing up in a meet also indicates that they are healthy enough to participate in a meet. This could be a “healthy swimmer effect”. 
+There is no way we can know whether the person is loss to follow or they do not want to participate in the meet based on our data.  This is a huge caveat to our analysis. (I also admit that my analysis is SUPER preliminary due to the nature of data, and maybe VERY biased due to omitted variables, model misspecification, etc.)
+
+* A reminder that my data only focus on the individual events, which mean that participation in the relay is not counted. It could totally be true to say that some people are more social animals and more likely to attend team events vs individual events.
+
+***
+
+### Finally...  
+Finally, because this is a data sciences class project, my work heavily lean towards the quantitive side. However, my belief is that data sciences are more than numbers. There are stories, qualitatively, giving you insights about the social connection between swimmers, and the benefits that swimmers can gain by joining a group. 
+
+So I encourage you to network with your fellow lane mates. Learn about their motivations. I wish data could be an incentive for anyone to open conversations with their teammates and/or your coaches. And sometimes conversations can lead to meaningful changes.
+
+In the long run, I wish to continuously working on this project in my spare time (too bad it cannot be a thesis…). If you want to collaborate, please contact :)
+
+<style>
+div.blue { background-color:#AED6F1 ; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+If we treat data as a human, what would it be?
+</div>
+
+
+&nbsp;
+<hr />
+<p style="text-align: center;">A work by Futu Chen</p> 
+<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
+<p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Add font awesome icons -->
+<p style="text-align: center;">
+    <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a>
+    <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
+</p>
+
+&nbsp;
+
+
+
+
+
+
+
+

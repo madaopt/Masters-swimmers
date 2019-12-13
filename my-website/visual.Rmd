@@ -1,0 +1,53 @@
+---
+title: "Visualization"
+description: |
+  Data visualization of masters swimmers' performance 
+author:
+    - name: Futu Chen
+    
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+To start, I want to firstly introduce two quick plots. The first one shows the total number of swimmers participated in the meet over time (split by males and females). The second one shows the club/team participation over time, split by the size of the team. I want to highlight here that all the visualizations on this page **do not** aim at *comparing clubs* or *comparing individuals*.  The goal is to visualize how each individual/each club did over time. What is their strength and how active they are.  
+(Data only contains **individual events**, so we are missing participates who just came for relays)  
+
+***
+<center>
+<div>
+<iframe width="900" height="400" align="middle" frameborder="0" scrolling="no" src="https://plot.ly/~madaopt/3.embed"></iframe>
+<iframe width="900" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~madaopt/7.embed"></iframe>
+</div>
+</center>
+
+
+
+***
+
+```{r layout="l-body-outset", echo=FALSE }
+htmltools::tags$iframe(title = "visual", src = "https://madao-pt.shinyapps.io/shinyapp-swimmer/", width = '100%', height = '1200')
+```
+
+
+
+
+&nbsp;
+<hr />
+<p style="text-align: center;">A work by Futu Chen</p> 
+<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
+<p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Add font awesome icons -->
+<p style="text-align: center;">
+    <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a>
+    <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
+</p>
+
+&nbsp;
+
+

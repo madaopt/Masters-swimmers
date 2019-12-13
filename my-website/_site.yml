@@ -2,13 +2,18 @@ name: "my-website"
 title: "Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019"
 description: |
   some description
-output_dir: "_site"
+output_dir: "docs"
 navbar:
   right:
     - text: "Home"
       href: index.html
+    - text: "Visualization"
+      href: visual.html
+    - text: "Inference"
+      href: inf.html
     - text: "About"
       href: about.html
+   
 output: 
   distill::distill_article:
    css: style.css

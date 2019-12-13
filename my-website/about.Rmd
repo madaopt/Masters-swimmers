@@ -3,7 +3,7 @@ title: "About this project"
 author:
 - name: Futu Chen
 description: |
-  This page holds my required answers for BST260 final project
+  Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE
  
 ---
 
@@ -14,44 +14,58 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 ### Overview and Motivation:   
-The word “Masters swimmer” simply indicates swimmers who are 18 and older. They usually consist of competitive swimmers, triathletes and recreational swimmers. U.S. Masters Swimming (USMS) is a national nonprofit that provides membership benefits to nearly 65,000 Masters swimmers across the country. The emphasize of USMS is to provide a healthy exercise program for people age 18 to 99 at any swimming level. It has regional branches, such as New England Local Masters Swimming Committee (NE LMSC), and clubs/workout groups under each branch. This project will be focus on the NE LMSC.
+The word “Masters swimmer” simply indicates swimmers who are 18 and older. They usually consist of competitive swimmers, triathletes and recreational swimmers. U.S. Masters Swimming (USMS) is a national nonprofit that provides membership benefits to nearly 65,000 Masters swimmers across the country. The emphasize of USMS is to provide a healthy exercise program for people age 18 to 99 at any swimming level. It has regional branches, such as [New England Local Masters Swimming Committee (NE LMSC)] (https://www.nelmsc.org/), and clubs/workout groups under each branch. This project will be focus on the [NE LMSC](https://www.nelmsc.org/).
 
-People who work out with one of the USMS clubs usually pay a membership fee (varying by clubs), in addition to a USMS yearly membership, and can practice as a group with coached workouts. Swimmers can choose to compete or simply swim for fitness.  Researches have shown the benefits of swimming in promoting optimal health. Additionally, swimming as a group with coached work out can help to reduce sports related injury and provide substantial social and emotional benefits to the swimmers. 
+People who work out with one of the USMS clubs usually pay a membership fee (varying by clubs), in addition to a USMS yearly membership, and can practice as a group with coached workouts. Swimmers can choose to compete or simply swim for fitness/fun.  Research has shown the benefits of swimming in promoting optimal health. Additionally, swimming as a group with coached work out can help to reduce sports related injury and provide substantial social and emotional benefits to the swimmers. 
 
-Publications that analyzed master’s swimmers often just studied among elite swimmers (swimmers who meet the seed – required time – to compete in national or world championships). Those researches dropped “slow” swimmers who cannot meet the seed requirement but actually made up a large majority of the master’s swimmer population. 
-Regional championships, such as New England LMSC Short Course Yards Championship (NE LMSC SCY), does not require a base time and welcomes to anyone who has a membership with USMS. As mentioned above, swimmers can choose to participate in competitions (swim meets) or not. I am a long-term dedicated master’s swimmer who never professionally swam before. I noticed that people like me who do not have professional backgrounds are less likely to participant in the swim meets. Swim meet can be an incentive for effective training and a good opportunity to build social connections.
+Publications that analyzed master’s swimmers often just studied among elite swimmers (swimmers who meet the seed – required time – to compete in national or world championships). Those researches dropped other swimmers who cannot meet the seed requirement but actually made up a large majority of the master’s swimmer population. 
+Regional championships, such as New England LMSC Short Course Yards Championship (NE LMSC SCY), does not require a base time and welcomes to anyone who has a membership with USMS.
 
-I hope that through this explorative analysis, we can understand how swimmers at all levels participated in the race and how they are performed, with the hope to encourage more and more swimmers without a professional background to join the future meets. 
+I hope that through this explorative analysis, we can understand how swimmers at all levels participated in the race and how they are performed, with the hope to encourage more and more swimmers without a professional background to join the future meets.
 
 
 ### Related Work:   
-Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+My visualization (network graph) was inspired by [this post]( http://tany.kim/swimmers-history/?source=post_page-----dc86d77946b8----------------------). For the best of my knowledge, this is the first website that analyzes master’s swimmers in local events. 
+As stated above, there is a gap where publications almost always looking at the elite swimmers. I want to fill the gap by looking at swimmers at all levels. USMS regional meet(s) is an excellent resource. 
 
 ### Initial Questions:   
-What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?  
-At the design stage of this project:  
-+ Understand how individuals and clubs engaged in the NELMSC SCY Championship over the past 10 years
-+ Understand how swimmers are doing over time, especially whether participation in the swim meets can improve swimmers’ performance for both “fast” and “slow” swimmers
-: how “slow” swimmers did and whether participating in the swim meet motivate their improvement in the swimming time. 
+My study questions actually changed a bit over the course of the project. The top 3 questions that I want to answer are: **1. How swimmers connected**; **2. How each individual swimmer did over time**; and **3. Comparing “fast” swimmers and “slow” swimmers**
+Below I listed my study questions at different stages.  
+
+* At the design stage of this project:  
+  + Understand how individuals and clubs engaged in the NELMSC SCY Championship over the past 10 years using visualizations
+  + Understand how swimmers did over time, especially whether participation in the swim meets can improve swimmers’ performance for both “fast” and “slow” swimmers
+  +  Understand how “slow” swimmers did and whether participating in the swim meet motivate their improvement in the swimming time. 
+
+
+* During the course of my analysis:  
+  + Made my commitment. Data cleaning was painful but ‘dplyr’ is my homeboy. 
+  + I will talk more about the biases in my analysis in my limitations. I have to say due to the nature of the data, there are many omitted variables that can lead to model misspecification and biasness of my inference. However, I found it very helpful for swimmers to be able to see their personal trajectories, so I add an extra visualization in my shiny app. Defining “fast” and “slow” is a bit tricky. My final definition is based on my interviews with my swim mates. Additionally, I added one more “swimmer type” variable. 
+  +  Again, due to the nature of data (especially the censoring problem), I really cannot propose a fair longitudinal or survival model. To solve this, I tried mixed effect model and changed the predictor of interest. For detailed analysis, please refer to “Inference” page.
 
 
 ### Data: 
 Race data are available online at: [NELMSC website](https://www.nelmsc.org/)
-The tricky part is that race outcomes are .cl2 files. .cl2 is a race management file format that exported from race recording software. They appear to be text files but are much harder to put into a readable, legal excel or csv file. That is also why I choose to analyze individual events only. Team events need extra cleaning on splits, times and stroke legs, which are hard to understand the .cl2 structure. 
-
-
+The tricky part is that race outcomes are .cl2 files. .cl2 is a race management file format that exported from race recording software. They appear to be text files but are much harder to put into a readable, legal excel or csv file. That is also why I choose to analyze individual events only. Team events need extra cleaning on splits, times and stroke legs, which are hard to understand the .cl2 structure.  
 
 ### Exploratory Analysis: 
-What visualizations did you use to look at your data in different ways? What are the different statistical methods you considered? Justify the decisions you made, and show any major changes to your ideas. How did you reach these conclusions?
+Visualizations I use to look at the data in different ways: correlation between continuous variables, outliers (distributions) of speed, individual trajectories and mean (marginal) trends, as well as interactions   
+Different statistical methods I considered: cross sectional analysis and longitudinal analysis are the first two come into my mind. For longitudinal analysis, since I am more interested in the time-varying variable (year), so fixed effects can be a good choice. I also considered mixed effects with random slope only, mixed effects with random slope and random intercept for time, mixed effects with random slope and random intercept for time with interaction terms.  
+Decisions I made: I clearly jumped lots of details…but, finally I decided that for cross sectional analysis I will look at the participation in 2019 and see if other time-invariant (or assume to be time invariant) characteristics predicts the participation. For longitudinal analysis, because outcome is the speed (yard/second), the event matters. If I add all possible events, then the model will quickly run out of power. So, I decided to only look at three events that can represent sprinting, distance and strokes. Additionally, we ran out of degree of freedoms when adding the random intercept, so I have to only use the random slope and restrict to participants who attended more than 3 years (introduced bias). For more information,  please refer to the “inference” page.  
 
-### Final Analysis:
-What did you learn about the data? How did you answer the questions? How can you justify your answers?
+### Final Analysis:  
+I check out the data every year…to intimate myself to participate in the meet. The meet outcome data is rich, in that it provided yearly, individualized meet performance. The data is also limited, as lots of the potentially influential individual covariates are omitted, for example, moving indicator.  
+For more information on how I interpret my analysis, please refer to the “inference” page.
+
+
 
 
 
 &nbsp;
 <hr />
 <p style="text-align: center;">A work by Futu Chen</p>
+<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
 <p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
 <!-- Add icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

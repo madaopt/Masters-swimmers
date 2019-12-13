@@ -1,0 +1,202 @@
+---
+title: "Inference"
+author: "Futu Chen"
+date: "11/23/2019"
+output: html_document
+site: distill::distill_website
+---
+This documents the inference part of the BST260 homework 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+"%!in%" = Negate("%in%")
+library(ggplot2)
+library(RColorBrewer)
+library(tidyverse)
+library(readxl)
+library(tidyr)
+library(stringr)
+library(data.table)
+library(ggnetwork)
+library(intergraph)
+library(plyr)
+library(dplyr)
+library(plotly)
+library(igraph)
+
+if (!require("nlme")) install.packages("nlme")
+library("nlme")
+
+
+
+```
+The dataset I worked with is a cleaned dataset (for the detail of cleaning - see github code) of swimming speed measurements (yeard per second) from the NELMSC SCY Championship database. The key variables include:
+
+* `yrdpersec` = yrad per second, the outcome, is calculated as distance (in yrads)/seconds used
+* `fastfish` = indicator for fish type: 1 for those who on average, get 1st, 2nd or 3rd place per race, 0 for others (A 570:2989 ratio) 
+* `axis` = indicator for swimmer type: *Long-axis swimmers* are those who swam more long axis strokes (free style + back troke) than short axis strokes (butterfly + breaststroke); *Short-axis swimmers* are those who swam more short axis strokes than long axis strokes; If there is a draw (# of long-axis stroke events = # of short-axis stroke events), then is will be determined by whether they swam the butterfly or not. If they did, then they will be a short-axis swimmer; *IMers* are those who swam all five events, no matter how many times they swam.  
+* `gender` = Males and Females
+* `event` = a time-varying variable measuring the event they entered
+* `Year` = Time indicator, ranges from 2009 - 2019  
+* `baseage` = Baseline age indicator, recorded as the age when first entered the NELMSC SCY Championship
+
+### Cross-sectional Analysis
+## Study question:
++ Outcome: Participation in 2019 (recorded as 0/1)  
++ Predictor: # of time participated in the swim meet prior to 2019, baseline age, gender, fish type and swimmer type. The number of time participated from 2009-2018 is defined by 2 ways: multiple event entry in one year is calculated as 1 entry, or 1 event entry as 1 pariticipation (so that there will be multiple participations per year per person)  
+For more details about those variables, you can visit in the visualization page (in tab 2)
+
+```{r echo=FALSE}
+dat.cs2 <- readRDS("forinference_crosssectional.Rda")
+#str(dat.cs)
+dat.cs2$par_2019 <- factor(dat.cs2$par_2019)
+dat.cs2$axis.final2.f <- factor(dat.cs2$axis.final2)
+dat.cs2$gender.f <- factor(dat.cs2$Gender)
+#view the data pattern
+table(dat.cs2$par_2019,dat.cs2$gender.f)
+table(dat.cs2$par_2019,dat.cs2$fastfish)
+table(dat.cs2$par_2019,dat.cs2$axis.final2)
+
+#one at a time
+md1 <- glm(par_2019 ~ gender.f, data = dat.cs2, family = binomial(link = logit))
+summary(md1)#directiion and strength does not change much in a full model
+md2 <- glm(par_2019 ~ fastfish, data = dat.cs2, family = binomial(link = logit))
+summary(md2)#directiion and strength does not change much in a full model
+md3 <- glm(par_2019 ~ baseage, data = dat.cs2, family = binomial(link = logit))
+summary(md3)#directiion and strength does not change at all a full model
+md4 <- glm(par_2019 ~ axis.final2, data = dat.cs2, family = binomial(link = logit))
+summary(md4)#directiion and strength changed in a full model
+md5 <- glm(par_2019 ~ par_byyear, data = dat.cs2, family = binomial(link = logit))
+summary(md5)#directiion and strength did not change too much in a full model
+
+model1 <- glm(par_2019 ~ gender.f + fastfish + baseage + axis.final2 + par_byyear,  data = dat.cs2, family = binomial(link = logit))
+summary(model1)
+
+exp(coef(model1))
+exp(confint(model1)[4,])
+
+```
+
+
+### Longitudinal Analysis    
+reference: PHS 2000A Lab 11: Longitudinal Analysis, 2018
+### Step 0. Data preparation 
+To reduce the time occastion (because the more time points we have, we actually lost power by imposing the unrestricted correlation matrix), we need to reduce the # of measurements and # or observations.
+Now we need to construct a data that has a "balanced" design - each individual should be measured at the smae # of occastions.
+
+
+
+
+### Step 1. Visualize individual trajectories
+To get an idea of what our swimmer's trajectories look like as the year goes from 2009 to 2019, I plotted the speed trajectories for three events of interest:
++ 50 Freestyle: I use this to evalualte the speed of sprinting 
++ 1650 Freestyle: I use this to evalualte the speed of long-distance
++ 100 IM: I use this to evalualte the speed of strokes
+
+
+```{r}
+dat <- readRDS("forinference.Rda")
+
+dat %>%
+  filter(eventname_full == "50 Freestyle") %>%
+  ggplot(aes(x = Year, y = ydpersec, group = UniqueID, color = fastfish))+
+  geom_line(alpha=0.6) + 
+ scale_x_continuous(breaks = c(2009:2019))+
+  ylim(0.5,2.8)+
+  facet_grid( Gender ~.) +
+  theme( axis.text.x = element_text(angle = 45, vjust = 0.5))+
+  labs(x = "Year", y = "Speed: yard per second")+
+  ggtitle("Timeplot of speed against time: 50 Yard Free")
+
+dat %>%
+  filter(eventname_full == "1650 Freestyle") %>%
+  ggplot(aes(x = Year, y = ydpersec, group = UniqueID, color = fastfish))+
+  geom_line(alpha=0.6) + 
+  ylim(0.8,2)+
+  scale_x_continuous(breaks = c(2009:2019))+
+  facet_grid( Gender ~.) +
+  theme( axis.text.x = element_text(angle = 45, vjust = 0.5))+
+  labs(x = "Year", y = "Speed: yard per second")+
+  ggtitle("Timeplot of speed against time: 1650 Yard Free")
+
+dat %>%
+  filter(eventname_full == "100 IM") %>%
+  ggplot(aes(x = Year, y = ydpersec, group = UniqueID, color = fastfish))+
+  geom_line(alpha=0.6) + 
+  ylim(0.8,2)+
+  scale_x_continuous(breaks = c(2009:2019))+
+  facet_grid( Gender ~.) +
+  theme( axis.text.x = element_text(angle = 45, vjust = 0.5))+
+  labs(x = "Year", y = "Speed: yard per second")+
+  ggtitle("Timeplot of speed against time: 100 Yard IM")
+```
+
+We can see that there are not very much between individual variations among non-fast fishes, but there are between and within individual variations amon fast fishes. We may consider to use a mixed effect model accomdating for random slope and random intercepts. 
+
+
+### Step 2. Model building
+
+
+I will start with very simple. Assuming that everyone's speed changes in the same way over time, but that some people's trajectories are going to be shifted higher or lower depending on their gender, baseline age (at their first entry to the race), stroke type, and their "fish type".   
+
+Since this is a longitudinal data, we will for sure observe within individuals and between individual speed difference. We can account for this with a random intercept and/or a random slope. 
+
+We also might be interested in knowing how much people's trajectories differ from one another: are speed trajectories extremely variable, or does everyone basically experience the same change as the year goes up (people aging)? 
+
+Further still, we might be interested in whether variation in how their speed changes as people age is related to the SBP they had at age 25 (at baseline). Do SBP trajectories tend to be more positive for people with low SBP at age 25 (as there is more room for them to increase), for example? Or does your SBP at age 25 tell you very little about how your SBP is likely to change as you age? To answer these types of questions, we can add a random slope for time, and examine the G matrix it gives us.
+
+I will fit four models:
+
+* Model 1: Allows each individuals to begin their trajectory at a different (randomly determined) point
+* Model 2: Allows each individuals to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope
+* Model 3: Allows each individuals to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope for time, AND allows outcomes to vary by fish type, gender, and baseline age
+* Model 4: Allows each individuals to begin their trajectory at a different (randomly determined) point, AND allows each person to have a different (randomly determined) linear slope for time, AND allows outcomes to vary by fish type, gender, and baseline age.
+
+```{r modelbuilding}
+#subset data by events
+#event.list <- c("50 Freestyle","100 Freestyle" , "200 Freestyle" , "500 Freestyle","1000 Freestyle"  ,"1650 Freestyle","50 Backstroke" ,  "100 Backstroke" , "200 Backstroke",  "50 Breaststroke", "100 Breaststroke","200 Breaststroke", "50 Butterfly", "100 Butterfly" , "200 Butterfly"   , "100 IM","200 IM","400 IM")
+#load already saved data
+# dat <- readRDS("forinference.Rda")
+# dat$gender.f <- factor(dat$Gender)
+# dat$axis.f <- factor(dat$axis.final2)
+# 
+# event.list <- c("50 Freestyle","1650 Freestyle","50 Backstroke" ,  "100 IM")
+# year.list <- c(2009:2019)
+# 
+# #take 50 free as an example
+# dat_50free <- filter(dat, eventname_full %in% event.list[1] & Year %in% year.list )
+# dev.new(width=6, height=3)
+# qplot(Year, ydpersec, data=dat_50free) + facet_wrap(~Gender, nrow=2) + geom_smooth(method='lm')
+# 
+# 
+# m1 <- lme(ydpersec ~ 1, data=dat_50free, random= ~ 1  | UniqueID )
+# m2 <- lme(ydpersec ~ 1 + Year, data=dat_50free, random= ~1 + Year | UniqueID, control= lmeControl(msMaxIter = 200, sing.tol=1e-20))
+# m3 <- lme(ydpersec ~ 1 + Year + baseage + gender.f +  fastfish + axis.f , data=dat_50free, random= ~1 + Year | UniqueID, control= lmeControl(msMaxIter = 200, sing.tol=1e-20))
+# 
+# # extract the fixed effects (beta estimates)
+#     fixef.m3 <- fixef(m3)
+#     
+# fixef.m3 
+#     
+    
+
+```
+
+
+
+&nbsp;
+<hr />
+<p style="text-align: center;">A work by Futu Chen</p>
+<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
+<p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Add font awesome icons -->
+<p style="text-align: center;">
+    <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a>
+    <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
+</p>
+
+&nbsp;
+
+
