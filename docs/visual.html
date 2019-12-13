@@ -19,30 +19,30 @@
  <!--/radix_placeholder_import_source-->
 
   <!--radix_placeholder_meta_tags-->
-  <title>Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019: About this project</title>
+  <title>Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019: Visualization</title>
   
-  <meta property="description" itemprop="description" content="Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE"/>
+  <meta property="description" itemprop="description" content="Data visualization of masters swimmers&#39; performance"/>
   
   
   <meta name="article:author" content="Futu Chen"/>
   
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019: About this project"/>
+  <meta property="og:title" content="Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019: Visualization"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE"/>
+  <meta property="og:description" content="Data visualization of masters swimmers&#39; performance"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019"/>
   
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019: About this project"/>
-  <meta property="twitter:description" content="Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE"/>
+  <meta property="twitter:title" content="Decoding Masters Swimmers: A Case Study on New England LMSC Short Course Yards Championship: 2009-2019: Visualization"/>
+  <meta property="twitter:description" content="Data visualization of masters swimmers&#39; performance"/>
   
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","author","description"]}},"value":[{"type":"character","attributes":{},"value":["About this project"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Futu Chen"]}]}]},{"type":"character","attributes":{},"value":["Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE\n"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","output"]}},"value":[{"type":"character","attributes":{},"value":["Visualization"]},{"type":"character","attributes":{},"value":["Data visualization of masters swimmers' performance \n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Futu Chen"]}]}]},{"type":"character","attributes":{},"value":["distill::distill_article"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -1309,7 +1309,7 @@
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"About this project","description":"Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE","authors":[{"author":"Futu Chen","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#"}]}
+{"title":"Visualization","description":"Data visualization of masters swimmers' performance","authors":[{"author":"Futu Chen","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#"}]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1333,8 +1333,8 @@
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>About this project</h1>
-<p>Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE</p>
+<h1>Visualization</h1>
+<p>Data visualization of masters swimmers’ performance</p>
 </div>
 
 <div class="d-byline">
@@ -1344,38 +1344,21 @@
 </div>
 
 <div class="d-article">
-<h3 id="overview-and-motivation">Overview and Motivation:</h3>
-<p>The word “Masters swimmer” simply indicates swimmers who are 18 and older. They usually consist of competitive swimmers, triathletes and recreational swimmers. U.S. Masters Swimming (USMS) is a national nonprofit that provides membership benefits to nearly 65,000 Masters swimmers across the country. The emphasize of USMS is to provide a healthy exercise program for people age 18 to 99 at any swimming level. It has regional branches, such as [New England Local Masters Swimming Committee (NE LMSC)] (<a href="https://www.nelmsc.org/" class="uri">https://www.nelmsc.org/</a>), and clubs/workout groups under each branch. This project will be focus on the <a href="https://www.nelmsc.org/">NE LMSC</a>.</p>
-<p>People who work out with one of the USMS clubs usually pay a membership fee (varying by clubs), in addition to a USMS yearly membership, and can practice as a group with coached workouts. Swimmers can choose to compete or simply swim for fitness/fun. Research has shown the benefits of swimming in promoting optimal health. Additionally, swimming as a group with coached work out can help to reduce sports related injury and provide substantial social and emotional benefits to the swimmers.</p>
-<p>Publications that analyzed master’s swimmers often just studied among elite swimmers (swimmers who meet the seed – required time – to compete in national or world championships). Those researches dropped other swimmers who cannot meet the seed requirement but actually made up a large majority of the master’s swimmer population. Regional championships, such as New England LMSC Short Course Yards Championship (NE LMSC SCY), does not require a base time and welcomes to anyone who has a membership with USMS.</p>
-<p>I hope that through this explorative analysis, we can understand how swimmers at all levels participated in the race and how they are performed, with the hope to encourage more and more swimmers without a professional background to join the future meets.</p>
-<h3 id="related-work">Related Work:</h3>
-<p>My visualization (network graph) was inspired by <a href="http://tany.kim/swimmers-history/?source=post_page-----dc86d77946b8----------------------">this post</a>. For the best of my knowledge, this is the first website that analyzes master’s swimmers in local events. As stated above, there is a gap where publications almost always looking at the elite swimmers. I want to fill the gap by looking at swimmers at all levels. USMS regional meet(s) is an excellent resource.</p>
-<h3 id="initial-questions">Initial Questions:</h3>
-<p>My study questions actually changed a bit over the course of the project. The top 3 questions that I want to answer are: <strong>1. How swimmers connected</strong>; <strong>2. How each individual swimmer did over time</strong>; and <strong>3. Comparing “fast” swimmers and “slow” swimmers</strong> Below I listed my study questions at different stages.</p>
-<ul>
-<li>At the design stage of this project:
-<ul>
-<li>Understand how individuals and clubs engaged in the NELMSC SCY Championship over the past 10 years using visualizations</li>
-<li>Understand how swimmers did over time, especially whether participation in the swim meets can improve swimmers’ performance for both “fast” and “slow” swimmers</li>
-<li>Understand how “slow” swimmers did and whether participating in the swim meet motivate their improvement in the swimming time.</li>
-</ul></li>
-<li>During the course of my analysis:
-<ul>
-<li>Made my commitment. Data cleaning was painful but ‘dplyr’ is my homeboy.</li>
-<li>I will talk more about the biases in my analysis in my limitations. I have to say due to the nature of the data, there are many omitted variables that can lead to model misspecification and biasness of my inference. However, I found it very helpful for swimmers to be able to see their personal trajectories, so I add an extra visualization in my shiny app. Defining “fast” and “slow” is a bit tricky. My final definition is based on my interviews with my swim mates. Additionally, I added one more “swimmer type” variable.</li>
-<li>Again, due to the nature of data (especially the censoring problem), I really cannot propose a fair longitudinal or survival model. To solve this, I tried mixed effect model and changed the predictor of interest. For detailed analysis, please refer to “Inference” page.</li>
-</ul></li>
-</ul>
-<h3 id="data">Data:</h3>
-<p>Race data are available online at: <a href="https://www.nelmsc.org/">NELMSC website</a> The tricky part is that race outcomes are .cl2 files. .cl2 is a race management file format that exported from race recording software. They appear to be text files but are much harder to put into a readable, legal excel or csv file. That is also why I choose to analyze individual events only. Team events need extra cleaning on splits, times and stroke legs, which are hard to understand the .cl2 structure.</p>
-<h3 id="exploratory-analysis">Exploratory Analysis:</h3>
-<p>Visualizations I use to look at the data in different ways: correlation between continuous variables, outliers (distributions) of speed, individual trajectories and mean (marginal) trends, as well as interactions<br />
-Different statistical methods I considered: cross sectional analysis and longitudinal analysis are the first two come into my mind. For longitudinal analysis, since I am more interested in the time-varying variable (year), so fixed effects can be a good choice. I also considered mixed effects with random slope only, mixed effects with random slope and random intercept for time, mixed effects with random slope and random intercept for time with interaction terms.<br />
-Decisions I made: I clearly jumped lots of details…but, finally I decided that for cross sectional analysis I will look at the participation in 2019 and see if other time-invariant (or assume to be time invariant) characteristics predicts the participation. For longitudinal analysis, because outcome is the speed (yard/second), the event matters. If I add all possible events, then the model will quickly run out of power. So, I decided to only look at three events that can represent sprinting, distance and strokes. Additionally, we ran out of degree of freedoms when adding the random intercept, so I have to only use the random slope and restrict to participants who attended more than 3 years (introduced bias). For more information, please refer to the “inference” page.</p>
-<h3 id="final-analysis">Final Analysis:</h3>
-<p>I check out the data every year…to intimate myself to participate in the meet. The meet outcome data is rich, in that it provided yearly, individualized meet performance. The data is also limited, as lots of the potentially influential individual covariates are omitted, for example, moving indicator.<br />
-For more information on how I interpret my analysis, please refer to the “inference” page.</p>
+<p>To start, I want to firstly introduce two quick plots. The first one shows the total number of swimmers participated in the meet over time (split by males and females). The second one shows the club/team participation over time, split by the size of the team. I want to highlight here that all the visualizations on this page <strong>do not</strong> aim at <em>comparing clubs</em> or <em>comparing individuals</em>. The goal is to visualize how each individual/each club did over time. What is their strength and how active they are.<br />
+(Data only contains <strong>individual events</strong>, so we are missing participates who just came for relays)</p>
+<hr />
+<center>
+<div>
+<iframe width="900" height="400" align="middle" frameborder="0" scrolling="no" src="https://plot.ly/~madaopt/3.embed">
+</iframe>
+<iframe width="900" height="500" frameborder="0" scrolling="no" src="https://plot.ly/~madaopt/7.embed">
+</iframe>
+</div>
+</center>
+<hr />
+<div class="layout-chunk" data-layout="l-body-outset">
+<iframe title="visual" src="https://madao-pt.shinyapps.io/shinyapp-swimmer/" width="100%" height="1200"></iframe>
+</div>
  
 <hr />
 <p style="text-align: center;">
@@ -1395,6 +1378,7 @@ She swims with Boston University Masters Swim (BUMS), and you can find her in th
 <p style="text-align: center;">
 <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a> <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
 </p>
+<p> </p>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
