@@ -42,7 +42,7 @@
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","output"]}},"value":[{"type":"character","attributes":{},"value":["Inference"]},{"type":"character","attributes":{},"value":["Cross sectional analysis & longitudinal analysis looking at participation and the association with aging\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Futu Chen"]},{"type":"character","attributes":{},"value":["github url"]},{"type":"character","attributes":{},"value":["H U"]}]}]},{"type":"character","attributes":{},"value":["distill::distill_article"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","output"]}},"value":[{"type":"character","attributes":{},"value":["Inference"]},{"type":"character","attributes":{},"value":["Cross sectional analysis & longitudinal analysis looking at participation and the association with aging\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Futu Chen"]},{"type":"character","attributes":{},"value":["https://github.com/madaopt/Masters-swimmers"]}]}]},{"type":"character","attributes":{},"value":["distill::distill_article"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -1309,7 +1309,7 @@
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Inference","description":"Cross sectional analysis & longitudinal analysis looking at participation and the association with aging","authors":[{"author":"Futu Chen","authorURL":"github url","affiliation":"H U","affiliationURL":"#"}]}
+{"title":"Inference","description":"Cross sectional analysis & longitudinal analysis looking at participation and the association with aging","authors":[{"author":"Futu Chen","authorURL":"https://github.com/madaopt/Masters-swimmers","affiliation":"&nbsp;","affiliationURL":"#"}]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1338,15 +1338,15 @@
 </div>
 
 <div class="d-byline">
-  Futu Chen github url (H U)
+  Futu Chen <a href="https://github.com/madaopt/Masters-swimmers" class="uri">https://github.com/madaopt/Masters-swimmers</a> 
   
 
 </div>
 
 <div class="d-article">
 <h3 id="on-this-page">On this page…</h3>
-<p>I am going to dive deeper into some formal analysis, with the hope to answer my study questions. I will begin with some cross-sectional analysis (a snapshot of the data, one dimension of time), where I used past performance and attendance to predict participation in 2019. I then moved into longitudinal analysis, where I am more interested in the association between aging (change in time) and meet performance. I will walk through different model specifications, outputs and my own interpretations. Lastly, I will discuss my limitations and future directions.<br />
-***</p>
+<p>I am going to dive deeper into some formal analysis, with the hope to answer my study questions. I will begin with some cross-sectional analysis (a snapshot of the data, one dimension of time), where I used past performance and attendance to predict participation in 2019. I then moved into longitudinal analysis, where I am more interested in the association between aging (change in time) and meet performance. I will walk through different model specifications, outputs and my own interpretations. Lastly, I will discuss my limitations and future directions.</p>
+<hr />
 <p>The dataset I worked with is a cleaned dataset (for the detail of cleaning - see github code) of swimming speed measurements (yard per second) from the NELMSC SCY Championship database. The key variables include:</p>
 <ul>
 <li><code>yrdpersec</code> = yard per second, the outcome, is calculated as distance (in yards)/seconds used</li>
@@ -1365,15 +1365,25 @@ As you can tell, the more events a person swam, the more “accurate” this mea
 <h4 id="study-question">Study question:</h4>
 <p>The overall study question for cross-sectional analysis is to see whether a swimmers’ past participation pre-2019, gender, fish type, stroke type and baseline age (all are time-invariant variables) predicts/associated with the participation in 2019.</p>
 <p>Let me put forward some limitations: I agree that to answer this question, we lost many potentially important variables, such as move indicator, health status and helpful time varying variables. We cannot interpret those models as predictive models as I will strongly question the predictive power. Let’s serve those cross-sectional analysis an insight of how swimmers’ characteristics on average <em>associate with</em> participation in 2019.</p>
-<h5 id="outcome">Outcome:</h5>
-<p>Participation in 2019 (recorded as 0/1)<br />
-#### Predictors are: * <code>par_byyear</code> # of time participated in the swim meet prior to 2019 - regardless of the events participated, so max per person is 1 per year * <code>gender</code> * <code>fastfish</code> * <code>axis</code><br />
-* <code>baseage</code></p>
+<h5 id="outcome">OUTCOME:</h5>
+<p>Participation in 2019 (recorded as 0/1)</p>
+<h4 id="predictors-are">Predictors are:</h4>
+<ul>
+<li><code>par_byyear</code> # of time participated in the swim meet prior to 2019 - regardless of the events participated, so max per person is 1 per year<br />
+</li>
+<li><code>gender</code><br />
+</li>
+<li><code>fastfish</code><br />
+</li>
+<li><code>axis</code><br />
+</li>
+<li><code>baseage</code></li>
+</ul>
 <p>Aside: I also tried to define “past participation” as 1 event entry = 1 participation (so that there will be multiple participations per year per person). Using either of them do not change my result. I ended up only use the variable <code>par_byyear</code>, where 1 meet entry (instead of event entry) = 1 participation (to that max 1 participation per year per person)</p>
 <p>For more details about those variables, you can visit in the visualization page (in tab 2)</p>
 <hr />
 <h4 id="restuls">Restuls:</h4>
-<p>After taking a few look of my data, I firstly use one variable at a time and see how it will change the coefficient using unconditional logistic regression.</p>
+<p>After taking a few looks of my data, I firstly use one variable at a time, and then compare it with the full model to see how the coefficient changed comparing unconditional and conditional logistic regression.</p>
 <div class="layout-chunk" data-layout="l-screen-inset shaded">
 <table style="border-collapse:collapse; border:none;">
 <tr>
@@ -1729,18 +1739,23 @@ R<sup>2</sup> Tjur
 </div>
 <p>From the table we can see that the direction and strength of some predictors did not change too much from “single model” to a full model. Interestingly, before adjustment, the swimmer type – long and short axis stroke swimmers, comparing to IMers, were more likely to participate in the swim meet in 2019. While after adjusting for others, they became less likely and the coefficients became significant. Since this is an associational model, I would not use the word “confounding”. What I can tell is that, the swimmer type is correlated with other characteristics, and that correlation created noise when we only looking at the simple models.</p>
 <p>Let’s just look at the full model for now.<br />
-gender.f + fastfish + baseage + axis.final2 + par_byyear, <span class="math display">\[\log\left(\frac{p_{par2019}}{1 - p_{par2019}}\right) = \beta_0 + \beta_1Gender+ \beta_2FastFish + \beta_3BaseAge + \beta_4Swimmer Type + \beta_5NumberOfPastParticipation \]</span><br />
+<span class="math display">\[\log\left(\frac{p_{par2019}}{1 - p_{par2019}}\right) = \beta_0 + \beta_1Gender+ \beta_2FastFish + \beta_3BaseAge + \beta_4Swimmer Type + \beta_5NumberOfPastParticipation \]</span><br />
 Surprisingly, in the fully adjusted model, all the variables are significantly associated with participation in 2019 excepting gender. Being a fast fish, after conditioning on other variables, seems to have a strong association with participations (OR=1.57, 95% CI: 1.16 – 2.10). Although baseline age is significantly associated with the outcome, the effect size is not that big (OR=1.03). Another strong association is the past participation. The more people participated in the past meet is associated with the less odds of participating in 2019 (OR=0.65, 95% CI: 0.57 – 0.73).</p>
 <p>I feel the result being understandable. It is good to see that conditioning on other variables, age and gender does not have too much relationship with the participation in 2019.<br />
 Those who on average placed the top 3 in their game are for sure more likely to do it again. The negative association with the past participation may be attributed to the omitted variables.</p>
 <hr />
-<hr />
 <h3 id="longitudinal-analysis">Longitudinal Analysis</h3>
-<p>reference: PHS 2000A Lab 11: Longitudinal Analysis, 2018 ### Step 0. Data preparation To reduce the time occastion (because the more time points we have, we actually lost power by imposing the unrestricted correlation matrix), we need to reduce the # of measurements and # or observations. Now we need to construct a data that has a “balanced” design - each individual should be measured at the smae # of occastions.</p>
+<p>Reference: PHS 2000A Lab 11: Longitudinal Analysis, 2018</p>
+<h3 id="step-0.-data-preparation">Step 0. Data preparation</h3>
+<p>To reduce the time occastion (because the more time points we have, we actually lost power by imposing the unrestricted correlation matrix), we need to reduce the # of measurements and # or observations. Now we need to construct a data that has a “balanced” design - each individual should be measured at the smae # of occastions.</p>
 <h3 id="step-1.-visualize-individual-trajectories">Step 1. Visualize individual trajectories</h3>
-<p>To get an idea of what our swimmer’s trajectories look like as the year goes from 2009 to 2019, I plotted the speed trajectories for three events of interest:<br />
-+ 50 Freestyle: I use this to evaluate the speed of sprinting + 1650 Freestyle: I use this to evaluate the speed of long-distance swimming<br />
-+ 100 IM: I use this to evaluate the speed of strokes</p>
+<p>To get an idea of what our swimmer’s trajectories look like as the year goes from 2009 to 2019, I plotted the speed trajectories for three events of interest:</p>
+<ul>
+<li>50 Freestyle: I use this to evaluate the speed of sprinting</li>
+<li>1650 Freestyle: I use this to evaluate the speed of long-distance swimming<br />
+</li>
+<li>100 IM: I use this to evaluate the speed of strokes</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="inf_files/figure-html5/unnamed-chunk-2-1.png" width="624" /><img src="inf_files/figure-html5/unnamed-chunk-2-2.png" width="624" /><img src="inf_files/figure-html5/unnamed-chunk-2-3.png" width="624" /></p>
 </div>
@@ -1793,7 +1808,7 @@ MVN (0,\left[\begin{array}
 <p><strong>In reality:</strong> I soon found out that by adding year as a random and fixed effect, the degree of freedom (df) lost quickly. The more years and the more people we have in the mixed model, the less df we have, and the less likely the model converges.</p>
 <p>So, I have to give up the original ideas, but moving to models with random intercept only. I also have to further subset my data to people who swam more than 3 times during the past 10 years, which of course introduced selection bias. For the purpose of this preliminarily analysis, please forgive me.</p>
 <p>The final model is written as: <span class="math display">\[Y_{ij} = \beta_0 + b_{0i} + \beta_1year_{ij} + \beta_iZ_i+ e_{ij}\]</span></p>
-<p><span class="math display">\[e_{ij} \sim \mathrm{N} (0,\sigma^2_e)\]</span> <span class="math display">\[b_{0i} \sim \mathrm{N} (0,\sigma^2_{b0i})\]</span></p>
+<p><span class="math display">\[e_{ij} \sim \mathrm{N} (0,\sigma^2_e)\]</span> <span class="math display">\[b_{0i} \sim \mathrm{N} (0,\sigma^2_{b0i})\]</span> I also tried some interactions, and below are the output from some of my results</p>
 <div class="layout-chunk" data-layout="l-body">
 <table style="border-collapse:collapse; border:none;">
 <caption style="font-weight: bold; text-align:left;">
@@ -1858,7 +1873,7 @@ p
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Year
+fastfish1
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.21849
@@ -1881,7 +1896,7 @@ Year
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-gender.f [Male]
+gender.fMale
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.29068
@@ -1904,7 +1919,7 @@ gender.f [Male]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-fastfish [1]
+Year
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.00780
@@ -1927,7 +1942,7 @@ fastfish [1]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-axis.f [long-axis]
+baseage
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.01218
@@ -1950,7 +1965,7 @@ axis.f [long-axis]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-axis.f [short-axis]
+axis.fshort-axis
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.00945
@@ -1973,7 +1988,7 @@ axis.f [short-axis]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-baseage
+axis.flong-axis
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.00322
@@ -1996,7 +2011,7 @@ baseage
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Year * gender.f [Male]
+Year:gender.fMale
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 </td>
@@ -2122,7 +2137,7 @@ p
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-(Intercept)
+intercept
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 10.6875
@@ -2168,7 +2183,7 @@ Year
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-gender.f [Male]
+Gender-Male (ref=Female)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.1152
@@ -2191,7 +2206,7 @@ gender.f [Male]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-fastfish [1]
+Fastfish (ref=others)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.0046
@@ -2214,7 +2229,7 @@ fastfish [1]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-axis.f [long-axis]
+Swimmer type - long axis (ref=IMer)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.0078
@@ -2237,7 +2252,7 @@ axis.f [long-axis]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-axis.f [short-axis]
+Swimmer type - short axis (ref=IMer)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.0060
@@ -2260,7 +2275,7 @@ axis.f [short-axis]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-baseage
+Base age
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.0212
@@ -2283,7 +2298,7 @@ baseage
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Year * gender.f [Male]
+Gender*Year
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 </td>
@@ -2409,7 +2424,7 @@ p
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-(Intercept)
+intercept
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 13.1059
@@ -2455,7 +2470,7 @@ Year
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-gender.f [Male]
+Gender-Male (ref=Female)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.2173
@@ -2478,7 +2493,7 @@ gender.f [Male]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-fastfish [1]
+Fastfish (ref=others)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.0057
@@ -2501,7 +2516,7 @@ fastfish [1]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-axis.f [long-axis]
+Swimmer type - long axis (ref=IMer)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.0102
@@ -2524,7 +2539,7 @@ axis.f [long-axis]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-axis.f [short-axis]
+Swimmer type - short axis (ref=IMer)
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.0335
@@ -2547,7 +2562,7 @@ axis.f [short-axis]
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-baseage
+Base age
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 -0.0101
@@ -2570,7 +2585,7 @@ baseage
 </tr>
 <tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-Year * gender.f [Male]
+Gender*Year
 </td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 </td>
@@ -2657,7 +2672,29 @@ Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
 </tr>
 </table>
 </div>
-<p>Something we also want to see is so called ICC: the ratio of the between-individual variance to the total variance is called the Intraclass Correlation. Here ICC=0.95, so we have more variation between individuals than within individuals. So we probability is correct! A random slope is not necessary!</p>
+<p>Year (aging) is the variable that I am interested in. We see that the estimate actually looks similar comparing three distinct events. Gender is an influential effect modifier across all three events. I would not go into too much depth because of the degree of freedom we have to fit the mixed model.</p>
+<p>Something I also want to highlight is the ICC: the ratio of the between-individual variance to the total variance. Here ICC is all around 0.95, so we have more between individual variations than within individual variations! We probability do not need to fit the mixed model, IF WE CHANGE OUR STUDY QUESTION, and only interested in population level change.</p>
+<p>To find more about marginal model, please refer to the visualization page.</p>
+<p>Obviously, I ran out of my capability to tell the whole story, but I think there are more we can learn from this dataset. If you are interested in doing more, please find my contact information at the bottom of this page.</p>
+<hr />
+<h4 id="limitations">Limitations!</h4>
+<h2 id="limitations-1">Limitations!!</h2>
+<p>I have to shout out to the world on this…despite it is at the very end of the page…</p>
+<ul>
+<li><p>Selection bias: Basically, people did not show up in the following years simply because…that they moved, which could be non-informative. Other informative censoring, such as injury from swimming, can also be true. Showing up in a meet also indicates that they are healthy enough to participate in a meet. This could be a “healthy swimmer effect”. There is no way we can know whether the person is loss to follow or they do not want to participate in the meet based on our data. This is a huge caveat to our analysis. (I also admit that my analysis is SUPER preliminary due to the nature of data, and maybe VERY biased due to omitted variables, model misspecification, etc.)</p></li>
+<li><p>A reminder that my data only focus on the individual events, which mean that participation in the relay is not counted. It could totally be true to say that some people are more social animals and more likely to attend team events vs individual events.</p></li>
+</ul>
+<hr />
+<h3 id="finally">Finally…</h3>
+<p>Finally, because this is a data sciences class project, my work heavily lean towards the quantitive side. However, my belief is that data sciences are more than numbers. There are stories, qualitatively, giving you insights about the social connection between swimmers, and the benefits that swimmers can gain by joining a group.</p>
+<p>So I encourage you to network with your fellow lane mates. Learn about their motivations. I wish data could be an incentive for anyone to open conversations with their teammates and/or your coaches. And sometimes conversations can lead to meaningful changes.</p>
+<p>In the long run, I wish to continuously working on this project in my spare time (too bad it cannot be a thesis…). If you want to collaborate, please contact :)</p>
+<style>
+div.blue { background-color:#AED6F1 ; border-radius: 5px; padding: 20px;}
+</style>
+<div class="blue">
+<p>If we treat data as a human, what would it be?</p>
+</div>
  
 <hr />
 <p style="text-align: center;">
