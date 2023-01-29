@@ -1,7 +1,7 @@
 ---
 title: "A Case Study on New England LMSC Short Course Yards Championship: 2009-2019"
 description: | 
-  BST260 Final project  
+  Build for fun (just as why I swim)   
   Author: Futu Chen
 site: distill::distill_website
 ---
@@ -11,12 +11,14 @@ site: distill::distill_website
 ![USMS](https://www.usms.org/-/media/usms/developers/images/logo/usmslogo.png)
 </center>
 
-Throughout, I explored the New England LMSC Short Course Yards Championship individual event outcomes from 2009 to 2019. Below is a 2 minutes video that walks you through the highlights of the website.
+I explored the New England LMSC Short Course Yards Championship individual event outcomes from 2009 to 2019. Below is a 2 minutes video that walks you through the website's highlights.
+
+**Important**: I built this website in 2019 as a class project. However, I spent so much time on it that it became more than a school project. I revisited my code FOUR years later and decided to share it publicly. The video was made in 2019.
+
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/1n76FNluEjI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   
 ***
-**For more information (specifically for grading purpose), please click "about"**
 
 ***
 
@@ -30,10 +32,10 @@ div.blue { background-color:#AED6F1 ; border-radius: 5px; padding: 20px;}
 Where you can explore: 1. Your connections; 2. Your individual records (and plots!); 3. How fast swimmers did over time vs. How others did over time; and more!
 
 - [Inference](https://madaopt.github.io/Masters-swimmers/inf.html)  
-Where I did one cross-sectional alaysis and one longitudinal analysis on meet participation and the swimming pace over time. Check it out!
+Where I did one cross-sectional analysis and one longitudinal analysis on meet participation and the swimming pace over time. Check it out!
 
 - [About](https://madaopt.github.io/Masters-swimmers/about.html)  
-Background and my tears (for this projct)
+Background and my tears (for this project)
 
 </div>
 
@@ -43,8 +45,8 @@ Background and my tears (for this projct)
 &nbsp;
 <hr />
 <p style="text-align: center;">A work by Futu Chen</p>
-<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
-<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
+<p style="text-align: center;">She is a 5th year PhD candidate at Harvard University, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swam with Boston University Masters Swim (BUMS) before the pandemic. She is a flyer, but the slowest kind (meh...) </p>
 <p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
 <!-- Add icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
