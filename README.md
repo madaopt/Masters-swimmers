@@ -1,6 +1,6 @@
 ## Welcome to My Page
 
-### This project used to be my data scoence course final project (took in 2019). I procasnated until now (2023!) to revisit the page and polish it. 
+### This project used to be my data science course final project (I took in 2019). I procrastinated until now (2023!) to revisit the page and polish it. 
 
 This project used to be my data science course final project (I took in 2019). However, I procrastinated until now (2023!) to revisit the page and polish it.
 
