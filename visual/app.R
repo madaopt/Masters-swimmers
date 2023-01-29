@@ -27,7 +27,7 @@ library(scales)
 #   ungroup()
 # saveRDS(dat2.sum, file="dat2.sum.Rda")
 
-
+setwd("/Users/madaopt/Desktop/Masters-swimmers/Masters-swimmers/visual")
 #read in data and some cleaning
 dat2.sum <- readRDS("dat2.sum.Rda")
 ag.list <- unique(dat2.sum$agegroupv2)
@@ -87,8 +87,8 @@ ui <- fluidPage(
           sidebarLayout(
             sidebarPanel(
               width=5,
-              p("From the visualization above, we can see that the total number of swimmers that entered the individual events is decreasing over time, however, the difference between total number of male and female participates also decreased. So, just as the first glance, bad news: it looks as though people are less and less likely to join the meet; good news: we have smaller and smaller gender gaps (mainly due to the decrease in male participants).
-Now, what if we break those numbers down into events and age groups?  
+              p("From the visualization above, we can see that the total number of swimmers that entered the individual events decreases over time. However, the gap between the total number of male and female participants was also reduced. So, just as first glance, the bad news: it looks as though people are less and less likely to join the meet; the good news: we have smaller and smaller gender gaps (mainly due to the decrease in male participants). 
+              Now, what if we break those numbers down into events and age groups?  
 "),
               br(),
               #dropdown
@@ -111,7 +111,7 @@ Now, what if we break those numbers down into events and age groups?
               sidebarLayout(
                 sidebarPanel(
                   width = 6,
-                p("This supposed to be a dedicated network graph, but due to the storage I have, it failed to upload to my free plotly account. Sigh…"), p("Basically, I collapsed the all the individual event data from 2009 to 2019, and made them into three columns: "),p("swimmer1: where it will filter by the name you input"),p ("swimmer2: people who swam with you in the *same event* of the *same age group* from 2009 to 2019. Just want to remind you that you actually swam with people by the “heat”, instead of your age group. However, there is no way for me to figure this out in the data, so I have to use the age group. My justification is that your place/point is eventually calculated within an age group." ),p("number of time swam together: is the total number of times that you both entered a same event in the same age group."),p("The more lines you have, the more people you connected with"),
+                p("This was supposed to be a dedicated network graph, but due to the storage I have, it failed to upload to my free Plotly account. Sigh…"), p("Basically, I collapsed all the individual event data from 2009 to 2019, and made them into three columns:"),p("swimmer1: where it will filter by the name you input"),p ("swimmer2: people who swam with you in the *same event* of the *same age group* from 2009 to 2019. I just want to remind you that you actually swam with people by the 'heat' instead of your age group. However, there is no way for me to figure this out in the data, so I have to use the age group. My justification is that your place/point is eventually calculated within an age group."),p("number of time swam together: is the total number of times that you both entered the same event in the same age group."),p("The more lines you have, the more people you connected with."),
               selectInput("nametab1", "Select your name", choices = uniquename)),
               mainPanel(
                 width=6,
@@ -148,7 +148,7 @@ Now, what if we break those numbers down into events and age groups?
              sidebarLayout(
                sidebarPanel(
                  width = 4,
-             p("You may also curious about how you did over time. Just like the first tab, you can input your name to view your own factors (or your network from the first tab!) "), p("The plot on the right-hand side provides you an overview of how you did over time. Speed is calculated by dividing distance (in yards) by your time. Scroll down for more fun facts!"),
+             p("You may also be curious about how you did over time. Just like the first tab, you can input your name to view your own factors (or your network from the first tab!) "), p("The plot on the right-hand side provides you an overview of how you did over time. Speed is calculated by dividing distance (in yards) by your time. Scroll down for more fun facts!"),
              selectInput("nametab2", "Select a name (try multiple inputs)", choices = uniquename, multiple = TRUE), selected = uniquename[1]
                ),
              mainPanel(
@@ -157,7 +157,7 @@ Now, what if we break those numbers down into events and age groups?
              )#main panel
              ),
              p("
-Medal: There are three medals – gold, silver and bronze that “awarded” to each swimmer (and yes, everyone gets a medal!). It is measured by adding up the total place over time, divided by the total number of races they did. DQ and NS are considered as missing. Therefore, I had an average place per race per person. The top 33% (from the smallest to largest, the smaller the better) win a gold, the middle wins a sliver, and the rest wins a bronze. "),p("Fast fish: fast fishes are those people who, on average, placed first 3. It is a binary variable with 1 = fast fish and 0 = others."),p("Swimmer type: there are three types - long-axis swimmer, short-axis swimmer and IMer. It is calculated by comparing the total number of freestyle and backstroke events participated vs. the total number of breaststroke and butterfly events participated.  DQ and NS also count for “participation”. If the person swam more long-axis events than short-axis events, then that person is a long-axis swimmer; If the person swam more short-axis events than long-axis events, then that person is a short-axis swimmer; If there is a draw, then I determine it by whether the person swam butterfly or not. Butterfly lover? Short axis swimmers! Hate butterfly? Long axis swimmers! Additionally, if that person participated in all 5 events in the past (free, back, breast, fly and IM), I call that person an “IMer”. Well-deserved!"),
+Medal: There are three medals – gold, silver, and bronze that are 'awarded' to each swimmer (and yes, everyone gets a medal!). It is measured by adding up the total place over time, divided by the total number of races they did. DQ and NS are considered missing. Therefore, I had an average place per race per person. The top 33% (from the smallest to largest, the smaller, the better) win a gold, the middle wins a sliver, and the rest wins a bronze. "),p("Fast fish: fast fishes are those people who, on average, placed first 3. It is a binary variable with 1 = fast fish and 0 = others."),p("Swimmer type: there are three types - long-axis swimmer, short-axis swimmer and IMer. It is calculated by comparing the total number of freestyle, and backstroke events participated vs. the total number of breaststroke and butterfly events. DQ and NS also count for 'participation'. If the person swam more long-axis events than short-axis events, then that person is a long-axis swimmer; If the person swam more short-axis events than long-axis events, then that person is a short-axis swimmer; If there is a draw, then I determine it by whether the person swam butterfly or not. Butterfly lover? Short-axis swimmers! Hate butterfly? Long-axis swimmers! Additionally, if that person participated in all five events in the past (free, back, breast, fly, and IM), I call that person an 'IMer'. Well-deserved!"),
              
              fluidRow(
                column(width=12,
@@ -175,7 +175,7 @@ Medal: There are three medals – gold, silver and bronze that “awarded” to 
     tabPanel("Fast fishes",
              sidebarLayout(
                sidebarPanel(
-                 p("This tab tells a story about those who on average placed the first 3 per race. They can be viewed as “elite” master swimmers. Let’s see how they performed over time."), p("Small dots represents individual data points. Big dot is the mean speed with its standard deviations (as bars). Blue line represents a regression line with confidence intervals."),
+                 p("This tab tells a story about those who on average, placed the first 3 per race. They can be viewed as “elite” master swimmers. Let’s see how they performed over time."), p("Small dots represent individual data points. Big dots are the mean speed with its standard deviations (as bars). Blue lines represent a regression line with confidence intervals."),
                  selectInput("eventtab3", "Select an event", choices = c( "50 Freestyle","100 Freestyle" , "200 Freestyle" , "500 Freestyle","1000 Freestyle"  ,"1650 Freestyle","50 Backstroke" ,  "100 Backstroke" , "200 Backstroke",  "50 Breaststroke", "100 Breaststroke","200 Breaststroke", "50 Butterfly", "100 Butterfly" , "200 Butterfly"   , "100 IM","200 IM","400 IM"), selected= "50 Freestyle", multiple=FALSE),
                  selectInput("gendertab3",  "Choose a gender", choices = c("Male","Female")),
                  selectInput("agegrouptab3",  "Choose an age group", choices = c("18-24","25–29","30–34", "35–39", "40–44", "45–49", "50–54", "55–59", "60–64", "65–69", "70–74", "80–84", "75–79", "90–94", "85–89"))
@@ -199,7 +199,7 @@ Medal: There are three medals – gold, silver and bronze that “awarded” to 
     tabPanel("Others",
              sidebarLayout(
                sidebarPanel(
-                 p("This tab tells a story about those non-fast fishes. Let’s see how they performed over time."), p("Small dota represents individual data points. Big dot is the mean speed with its standard deviations (as bars). Blue line represents a regression line with confidence intervals."),
+                 p("This tab tells a story about those non-fast fishes. Let’s see how they performed over time."), p("Small dota represents individual data points. Big dots are the mean speed with its standard deviations (as bars). Blue lines represent a regression line with confidence intervals."),
                  selectInput("eventtab4", "Select an event", choices = c( "50 Freestyle","100 Freestyle" , "200 Freestyle" , "500 Freestyle","1000 Freestyle"  ,"1650 Freestyle","50 Backstroke" ,  "100 Backstroke" , "200 Backstroke",  "50 Breaststroke", "100 Breaststroke","200 Breaststroke", "50 Butterfly", "100 Butterfly" , "200 Butterfly"   , "100 IM","200 IM","400 IM"), selected= "50 Freestyle", multiple=FALSE),
                  selectInput("gendertab4",  "Choose a gender", choices = c("Male","Female")),
                  selectInput("agegrouptab4",  "Choose an age group", choices = c("18-24","25–29","30–34", "35–39", "40–44", "45–49", "50–54", "55–59", "60–64", "65–69", "70–74", "80–84", "75–79", "90–94", "85–89"))
@@ -219,8 +219,8 @@ Medal: There are three medals – gold, silver and bronze that “awarded” to 
     ),#tab4
     tabPanel("Some reflections",
              h4("Some take aways I found:"),
-             p("Here I briefly summarized some points that I found from the visualizations, as well as highlighting a big caveat of my “naïve” regression. However, you may have a different interpretation as you exploring the data."),p("
-It seems that the performance over time (in terms of yard per second stratified by gender, event and age group) is more stable among fast fishes, although it can totally be attributed to the number of data points I have for fast fishes (admit it or not, they are indeed rare-findings). Among younger age groups, it seems that we are getting slower over time, while among middle age groups, it seems that we are getting faster over time. "), p("However, this does not infer that we are getting slower! I see it as a good indicator that more and more people at different level are joining the meet."),p("Tab 3 and tab 4 are comparisons of performance between fast fish and other type of fish. I have to say that after categorizing fast v. others, the data per age group per gender per event is sparse, that is why you can see the big error bars and sometimes the model even became saturated."),p(" A HUGE caveat I need to flag is that those data are longitudinal points, which means that even though we assume individuals are independent of each other, the measurement within each individual at different time points are correlated. Here I presented the linear model using “naïve” OLS estimator, for the purpose of viewing the mean trajectories over time under the assumption of linearity. However, this violates zero conditional mean assumption (because our error is now correlated with observations). Thus, the error bar and the confidence intervals around my slope is biased! Well, more to cover in the “inference” session).") 
+             p("Here I briefly summarized some points that I found from the visualizations, as well as highlighting a big caveat of my “naïve” regression. However, you may have a different interpretation as you explore the data."),p("
+It seems that the performance over time (in terms of yards per second stratified by gender, event, and age group) is more stable among fast fishes, although it can totally be attributed to the number of data points I have for fast fishes (admit it or not, they are indeed rare-findings). Among younger age groups, it seems that we are getting slower over time, while among middle age groups, it appears that we are getting faster over time. "), p("However, this does not infer that we are getting slower! I see it as a good indicator that more and more people at different levels are joining the meet."),p("Tab 3 and tab 4 compare performance between fast fish and other types of fish. I have to say that after categorizing fast v. others, the data per age group per gender per event is sparse, that is why you can see the big error bars and sometimes the model even became saturated."),p(" A HUGE caveat I need to flag is that those data are longitudinal points, which means that even though we assume individuals are independent of each other, the measurement within each individual at different time points are correlated. Here I presented the linear model using “naïve” OLS estimator for the purpose of viewing the mean trajectories over time under the assumption of linearity. However, this violates the zero conditional mean assumption (because our error is now correlated with observations). Thus, the error bar and the confidence intervals around my slope are biased (estimates are biased too)! Well, more to cover in the “inference” session).") 
 
              
     )#tab5

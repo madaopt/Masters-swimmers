@@ -23,7 +23,7 @@ To start, I want first to introduce two quick plots. The first shows the total n
 </div>
 </center>
 
-
+(updated 2023: The following shiny plots were made in 2019. I have trouble updating my plotly and Shiny app. Sorry!)
 
 ***
 
