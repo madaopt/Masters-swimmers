@@ -1,7 +1,7 @@
 ---
 title: "Visualization"
 description: |
-  Data visualization of masters swimmers' performance 
+  Data visualization of masters swimmers' performance (2009-2019)
 author:
     - name: Futu Chen
     
@@ -12,8 +12,8 @@ output: distill::distill_article
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-To start, I want to firstly introduce two quick plots. The first one shows the total number of swimmers participated in the meet over time (split by males and females). The second one shows the club/team participation over time, split by the size of the team. I want to highlight here that all the visualizations on this page **do not** aim at *comparing clubs* or *comparing individuals*.  The goal is to visualize how each individual/each club did over time. What is their strength and how active they are.  
-(Data only contains **individual events**, so we are missing participates who just came for relays)  
+To start, I want first to introduce two quick plots. The first shows the total number of swimmers who participated in the meet over time (split by males and females). The second one shows the club/team participation over time, divided by the team size. I want to highlight here that all the visualizations on this page **do not** aim at *comparing clubs* or *comparing individuals*. Instead, the goal is to visualize how each individual/each club did over time. What is their strength, and how active they are.  
+(Data only contains **individual events**, so we are missing participants who just came for relays)  
 
 ***
 <center>
@@ -37,9 +37,9 @@ htmltools::tags$iframe(title = "visual", src = "https://madao-pt.shinyapps.io/sh
 
 &nbsp;
 <hr />
-<p style="text-align: center;">A work by Futu Chen</p> 
-<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
-<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
+<p style="text-align: center;">A work by Futu Chen</p>
+<p style="text-align: center;">She is a 5th year PhD candidate at Harvard University, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swam with Boston University Masters Swim (BUMS) before the pandemic. She is a flyer, but the slowest kind (meh...) </p>
 <p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
 <!-- Add icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -50,5 +50,4 @@ htmltools::tags$iframe(title = "visual", src = "https://madao-pt.shinyapps.io/sh
 </p>
 
 &nbsp;
-
 
