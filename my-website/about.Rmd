@@ -13,49 +13,55 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 
+Background, initial questions, analysis plan, and SOMETIMES PLANS CHANGE
+
+
 ### Overview and Motivation:   
-The word “Masters swimmer” simply indicates swimmers who are 18 and older. They usually consist of competitive swimmers, triathletes and recreational swimmers. U.S. Masters Swimming (USMS) is a national nonprofit that provides membership benefits to nearly 65,000 Masters swimmers across the country. The emphasize of USMS is to provide a healthy exercise program for people age 18 to 99 at any swimming level. It has regional branches, such as [New England Local Masters Swimming Committee (NE LMSC)] (https://www.nelmsc.org/), and clubs/workout groups under each branch. This project will be focus on the [NE LMSC](https://www.nelmsc.org/).
+The word “Masters swimmer” simply indicates swimmers who are 18 and older. They usually consist of competitive swimmers, triathletes, and recreational swimmers. U.S. Masters Swimming (USMS) is a national nonprofit that provides membership benefits to nearly 65,000 Masters swimmers across the country. USMS emphasizes providing a healthy exercise program for people aged 18 to 99 at any swimming level. It has regional branches, such as [New England Local Masters Swimming Committee (NE LMSC)] (https://www.nelmsc.org/), and clubs/workout groups under each branch. This project will focus on the [NE LMSC](https://www.nelmsc.org/).
 
-People who work out with one of the USMS clubs usually pay a membership fee (varying by clubs), in addition to a USMS yearly membership, and can practice as a group with coached workouts. Swimmers can choose to compete or simply swim for fitness/fun.  Research has shown the benefits of swimming in promoting optimal health. Additionally, swimming as a group with coached work out can help to reduce sports related injury and provide substantial social and emotional benefits to the swimmers. 
+People who work out with one of the USMS clubs usually pay a membership fee (varying by club), in addition to a USMS yearly membership and can practice as a group with coached workouts. Swimmers can choose to compete or simply swim for fitness/fun. Research has shown the benefits of swimming in promoting optimal health. Additionally, swimming as a group with coached workouts can help reduce sports-related injury and provide substantial social and emotional benefits to the swimmers. 
 
-Publications that analyzed master’s swimmers often just studied among elite swimmers (swimmers who meet the seed – required time – to compete in national or world championships). Those researches dropped other swimmers who cannot meet the seed requirement but actually made up a large majority of the master’s swimmer population. 
-Regional championships, such as New England LMSC Short Course Yards Championship (NE LMSC SCY), does not require a base time and welcomes to anyone who has a membership with USMS.
+Publications that analyzed master’s swimmers often just studied among elite swimmers (swimmers who meet the seed – required time – to compete in national or world championships). Those researchers dropped other swimmers who could not meet the seed requirement but actually made up a large majority of the master’s swimmer population. 
+Regional championships, such as New England LMSC Short Course Yards Championship (NE LMSC SCY), do not require a base time and welcome anyone who has a membership with USMS.
 
-I hope that through this explorative analysis, we can understand how swimmers at all levels participated in the race and how they are performed, with the hope to encourage more and more swimmers without a professional background to join the future meets.
+Through this explorative analysis, I hope we can understand how swimmers at all levels participated in the race and how they performed, with the hope of encouraging more and more swimmers without a professional background to join future meets.
+
+**I wrote these in 2019 when I was a second-year PhD student. My skills have been improving a bit. If you are interested in additional analysis, please contact!**
 
 
 ### Related Work:   
-My visualization (network graph) was inspired by [this post]( http://tany.kim/swimmers-history/?source=post_page-----dc86d77946b8----------------------). For the best of my knowledge, this is the first website that analyzes master’s swimmers in local events. 
-As stated above, there is a gap where publications almost always looking at the elite swimmers. I want to fill the gap by looking at swimmers at all levels. USMS regional meet(s) is an excellent resource. 
+My visualization (network graph) was inspired by [this post]( http://tany.kim/swimmers-history/?source=post_page-----dc86d77946b8----------------------). To the best of my knowledge, this is the first website that analyzes master’s swimmers in local events. 
+As stated above, there is a gap where publications almost always look at elite swimmers. I want to fill the gap by looking at swimmers at all levels. USMS regional meet(s) is an excellent resource. 
 
 ### Initial Questions:   
-My study questions actually changed a bit over the course of the project. The top 3 questions that I want to answer are: **1. How swimmers connected**; **2. How each individual swimmer did over time**; and **3. Comparing “fast” swimmers and “slow” swimmers**
+My study questions changed a bit throughout the project. The top 3 questions that I want to answer are **1. How swimmers connected**; **2. How each swimmer did over time**; and **3. Comparing “fast” swimmers and “slow” swimmers**
 Below I listed my study questions at different stages.  
 
 * At the design stage of this project:  
   + Understand how individuals and clubs engaged in the NELMSC SCY Championship over the past 10 years using visualizations
   + Understand how swimmers did over time, especially whether participation in the swim meets can improve swimmers’ performance for both “fast” and “slow” swimmers
-  +  Understand how “slow” swimmers did and whether participating in the swim meet motivate their improvement in the swimming time. 
+  +  Understand how “slow” swimmers did and whether participating in the swim meet motivated their improvement in the swimming time. 
 
 
 * During the course of my analysis:  
-  + Made my commitment. Data cleaning was painful but ‘dplyr’ is my homeboy. 
-  + I will talk more about the biases in my analysis in my limitations. I have to say due to the nature of the data, there are many omitted variables that can lead to model misspecification and biasness of my inference. However, I found it very helpful for swimmers to be able to see their personal trajectories, so I add an extra visualization in my shiny app. Defining “fast” and “slow” is a bit tricky. My final definition is based on my interviews with my swim mates. Additionally, I added one more “swimmer type” variable. 
-  +  Again, due to the nature of data (especially the censoring problem), I really cannot propose a fair longitudinal or survival model. To solve this, I tried mixed effect model and changed the predictor of interest. For detailed analysis, please refer to “Inference” page.
+  + Made my commitment. Data cleaning was painful, but ‘dplyr’ is my homeboy. 
+  + I will talk more about the biases in my analysis in my limitations. I have to say due to the nature of the data, many omitted variables can lead to model misspecification and biases in my inference. However, I found it very helpful for swimmers to see their trajectories, so I added an extra visualization in my shiny app. Defining “fast” and “slow” is a bit tricky. My final definition is based on my interviews with my swim mates. Additionally, I added one more “swimmer type” variable. 
+  +  Again, due to the nature of the data (especially the censoring problem), I really cannot propose a fair longitudinal or survival model. To solve this, I tried a mixed effect model and changed the predictor of interest. For detailed analysis, please refer to the “Inference” page.
 
 
 ### Data: 
 Race data are available online at: [NELMSC website](https://www.nelmsc.org/)
-The tricky part is that race outcomes are .cl2 files. .cl2 is a race management file format that exported from race recording software. They appear to be text files but are much harder to put into a readable, legal excel or csv file. That is also why I choose to analyze individual events only. Team events need extra cleaning on splits, times and stroke legs, which are hard to understand the .cl2 structure.  
+The tricky part is that race outcomes are .cl2 files. .cl2 is a race management file format that exported from race recording software. They appear to be text files but are much harder to put into a readable, legal excel or csv file. That is also why I choose to analyze individual events only. Team events need extra cleaning on splits, times, and stroke legs, which are hard to understand the .cl2 structure.  
 
 ### Exploratory Analysis: 
-Visualizations I use to look at the data in different ways: correlation between continuous variables, outliers (distributions) of speed, individual trajectories and mean (marginal) trends, as well as interactions   
-Different statistical methods I considered: cross sectional analysis and longitudinal analysis are the first two come into my mind. For longitudinal analysis, since I am more interested in the time-varying variable (year), so fixed effects can be a good choice. I also considered mixed effects with random slope only, mixed effects with random slope and random intercept for time, mixed effects with random slope and random intercept for time with interaction terms.  
-Decisions I made: I clearly jumped lots of details…but, finally I decided that for cross sectional analysis I will look at the participation in 2019 and see if other time-invariant (or assume to be time invariant) characteristics predicts the participation. For longitudinal analysis, because outcome is the speed (yard/second), the event matters. If I add all possible events, then the model will quickly run out of power. So, I decided to only look at three events that can represent sprinting, distance and strokes. Additionally, we ran out of degree of freedoms when adding the random intercept, so I have to only use the random slope and restrict to participants who attended more than 3 years (introduced bias). For more information,  please refer to the “inference” page.  
+Visualizations I use to look at the data in different ways: correlation between continuous variables, outliers (distributions) of speed, individual trajectories, and mean (marginal) trends, as well as interactions   
+Different statistical methods I considered: cross-sectional and longitudinal analysis are the first two that come into my mind. For longitudinal analysis, since I am more interested in the time-varying variable (year), fixed effects can be a good choice. I also considered mixed effects with random slope only, mixed effects with random slope and random intercept for time, mixed effects with random slope and random intercept for time with interaction terms.  
+Decisions I made: I clearly jumped over lots of details…but, finally, I decided that for cross-sectional analysis, I will look at the participation in 2019 and see if other time-invariant (or assumed to be time-invariant) characteristics predicts the participation. For longitudinal analysis, the event matters because the outcome is the speed (yard/second). If I add all possible events, then the model will quickly run out of power. So, I decided to only look at three events representing sprinting, distance, and strokes. Additionally, we ran out of degree of freedom when adding the random intercept, so I had to only use the random slope and restrict to participants who attended more than 3 years (introduced bias). For more information,  please refer to the “inference” page.  
 
 ### Final Analysis:  
-I check out the data every year…to intimate myself to participate in the meet. The meet outcome data is rich, in that it provided yearly, individualized meet performance. The data is also limited, as lots of the potentially influential individual covariates are omitted, for example, moving indicator.  
+I check out the data every year…to intimate myself to participate in the meet. The meet outcome data is rich in that it provides yearly, individualized meet performance. The data is also limited, as many potentially influential individual covariates are omitted, for example, moving indicator.  
 For more information on how I interpret my analysis, please refer to the “inference” page.
+
 
 
 
@@ -64,8 +70,8 @@ For more information on how I interpret my analysis, please refer to the “infe
 &nbsp;
 <hr />
 <p style="text-align: center;">A work by Futu Chen</p>
-<p style="text-align: center;">She is a second year PhD student at Harvard Univeristy, studying Population Health Sciences - Environmental Epidemiology track</p>
-<p style="text-align: center;">She swims with Boston University Masters Swim (BUMS), and you can find her in the slowest lane (meh...)</p>
+<p style="text-align: center;">She is a 5th year PhD candidate at Harvard University, studying Population Health Sciences - Environmental Epidemiology track</p>
+<p style="text-align: center;">She swam with Boston University Masters Swim (BUMS) before the pandemic. She is a flyer, but the slowest kind (meh...) </p>
 <p style="text-align: center;"><span style="color: #808080;"><em>fchen@g.harvard.edu</em></span></p>
 <!-- Add icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -74,3 +80,5 @@ For more information on how I interpret my analysis, please refer to the “infe
     <a href="https://www.linkedin.com/in/futu-c-590aa5b6/" class="fa fa-linkedin"></a>
     <a href="https://github.com/madaopt/Masters-swimmers" class="fa fa-github"></a>
 </p>
+
+&nbsp;
