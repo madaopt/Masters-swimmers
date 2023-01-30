@@ -13,10 +13,10 @@ site: distill::distill_website
 
 I explored the New England LMSC Short Course Yards Championship individual event outcomes from 2009 to 2019. Below is a 2 minutes video that walks you through the website's highlights.
 
-**Important**: I built this website in 2019 as a class project. However, I spent so much time on it that it became more than a school project. I revisited my code FOUR years later and decided to share it publicly. The video was made in 2019.
+I built this website in 2019 as a class project. However, I spent so much time on it that it became more than a school project. I revisited my code 3.5 years later and decided to share it publicly. 
 
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1n76FNluEjI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-MPj4P03y9A" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   
 ***
 
